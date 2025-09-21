@@ -4,13 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-  <title>Jurnal Calorii & Nutrienți — FoodApp</title>
+    <title>Jurnal Calorii & Nutrienți · Local</title>
   <link rel="stylesheet" href="style.css" />
   
 </head>
 <body>
   <div class="wrap">
     <h1>Jurnal Calorii & Nutrienți</h1>
+
+    <!-- Warning banner for folder not set -->
+    <div id="folder-warning" class="folder-warning" style="display: none;">
+      <div class="warning-content">
+        <span class="warning-icon">⚠️</span>
+        <span class="warning-text">Datele se salvează doar temporar. <strong>Click aici pentru a seta folderul</strong></span>
+        <button id="dismiss-warning" class="warning-dismiss">✕</button>
+      </div>
+    </div>
 
     <div class="tabs">
       <button class="tab active" data-tab="jurnal">Jurnal</button>
@@ -25,105 +34,192 @@
 
     <!-- JURNAL -->
     <section id="tab-jurnal" class="card">
-      <!-- Filtre pentru selecția produselor -->
-      <div class="row" style="margin-bottom:16px;padding:12px;background:var(--headerbg);border-radius:8px;">
-        <div>
-          <div style="position:relative;">
-            <input id="jr-product-search" placeholder="🔍 Caută și selectează produs..." style="min-width:300px;" autocomplete="off" />
-            <div id="jr-product-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:400px;overflow-y:auto;z-index:1000;display:none;">
-              <!-- Options will be populated dynamically -->
+      <div class="journal-controls">
+        <div class="jc-row jc-row-date">
+          <div class="jc-group">
+            <label>Data</label>
+            <input type="date" id="jr-date" />
+          </div>
+        </div>
+        <div class="jc-row jc-row-filters">
+          <div class="jc-group jc-filter">
+            <label>Categorie</label>
+            <select id="jr-filter-category">
+              <option value="">Toate categoriile</option>
+            </select>
+          </div>
+          <div class="jc-group jc-filter">
+            <label>Restaurant</label>
+            <select id="jr-filter-restaurant">
+              <option value="">Toate restaurantele</option>
+            </select>
+          </div>
+          <div class="jc-group jc-filter">
+            <label>&nbsp;</label>
+            <button id="jr-clear-filters" class="ghost">Curăță filtrele</button>
+          </div>
+        </div>
+        <div class="jc-row jc-row-count">
+          <div class="jc-group jc-count">
+            <span id="jr-product-count" class="jc-count-text">Produse disponibile: 0</span>
+          </div>
+        </div>
+        <div class="jc-row jc-row-product">
+          <div class="jc-group jc-search">
+            <label>Produs</label>
+            <div class="jc-search-box">
+              <input id="jr-product-search" placeholder="Cauta si selecteaza produs..." autocomplete="off" />
+              <div id="jr-product-dropdown" class="jc-dropdown" style="display:none;"></div>
             </div>
           </div>
-          <div class="hint" style="margin-top:4px;font-size:12px;">
-            <span id="jr-product-count">0 produse disponibile</span>
-          </div>
-          <div id="jr-popular-tags" style="margin-top:8px;display:none;">
-            <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">🏷️ Taguri populare (click pentru căutare):</div>
-            <div id="jr-tags-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-          </div>
         </div>
-        <div>
-          <select id="jr-filter-category">
-            <option value="">📂 Toate categoriile</option>
-          </select>
-        </div>
-        <div>
-          <div style="position:relative;">
-            <button id="jr-restaurant-dropdown-btn" type="button" style="width:200px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:4px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
-              <span id="jr-restaurant-btn-text">🏪 Toate restaurantele</span>
-              <span style="font-size:12px;">▼</span>
-            </button>
-            <div id="jr-restaurant-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:200px;overflow-y:auto;z-index:1000;display:none;padding:8px;">
-              <!-- Checkboxes will be populated dynamically -->
+        <!-- Product Selection Container (shown when product is selected) -->
+        <div id="jr-product-selection-container" class="jr-product-selection-container" style="display:none;">
+          <!-- Product Details Card -->
+          <div id="jr-product-details-card" class="jr-product-details-card">
+            <div class="jr-product-details-header">
+              <h3 id="jr-product-details-name">Nume produs</h3>
+              <button id="jr-clear-product" class="ghost">✕</button>
+            </div>
+            <div class="jr-product-details-content">
+              <div class="jr-product-details-meta">
+                <div class="jr-detail-item">
+                  <span class="jr-detail-label">Categorie:</span>
+                  <span id="jr-detail-category" class="jr-detail-value">-</span>
+                </div>
+                <div class="jr-detail-item">
+                  <span class="jr-detail-label">Restaurant:</span>
+                  <span id="jr-detail-restaurant" class="jr-detail-value">-</span>
+                </div>
+                <div class="jr-detail-item">
+                  <span class="jr-detail-label">UM bază:</span>
+                  <span id="jr-detail-base" class="jr-detail-value">-</span>
+                </div>
+                <div class="jr-detail-item">
+                  <span class="jr-detail-label">Greutate:</span>
+                  <span id="jr-detail-weight" class="jr-detail-value">-</span>
+                </div>
+              </div>
+              <div class="jr-product-details-nutrition">
+                <h4>Profil nutrițional (per 100g/ml/buc)</h4>
+                <div class="jr-nutrition-grid">
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Calorii:</span>
+                    <span id="jr-detail-calories" class="jr-nutrition-value">-</span>
+                  </div>
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Proteine:</span>
+                    <span id="jr-detail-protein" class="jr-nutrition-value">-</span>
+                  </div>
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Carbohidrați:</span>
+                    <span id="jr-detail-carbs" class="jr-nutrition-value">-</span>
+                  </div>
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Grăsimi:</span>
+                    <span id="jr-detail-fat" class="jr-nutrition-value">-</span>
+                  </div>
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Grăsimi saturate:</span>
+                    <span id="jr-detail-sat" class="jr-nutrition-value">-</span>
+                  </div>
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Zaharuri:</span>
+                    <span id="jr-detail-sugar" class="jr-nutrition-value">-</span>
+                  </div>
+                  <div class="jr-nutrition-item">
+                    <span class="jr-nutrition-label">Fibre:</span>
+                    <span id="jr-detail-fiber" class="jr-nutrition-value">-</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div style="align-self:flex-end;">
-          <button id="jr-clear-filters" class="ghost">Curăță filtrele</button>
+
+          <!-- Quantity Input Section -->
+          <div class="jr-quantity-section">
+        <div class="jc-row jc-row-meta">
+          <div class="jc-group jc-qty">
+            <label>Cantitate</label>
+            <input type="number" id="jr-qty" min="0" step="0.01" placeholder="0" />
+          </div>
+          <div class="jc-group jc-unit-display">
+            <label>&nbsp;</label>
+            <div id="jr-unit-display" class="jc-unit-label">-</div>
+          </div>
+          <div class="jc-group jc-unit" id="jr-unit-group" style="display:none;">
+            <label>UM</label>
+            <select id="jr-unit">
+              <option value="g">g</option>
+              <option value="ml">ml</option>
+              <option value="buc">buc</option>
+            </select>
+          </div>
+          <div class="jc-group jc-meta" id="jr-category-group" style="display:none;">
+            <label>Categorie</label>
+            <div id="jr-selected-category" class="jc-pill">Neselectat</div>
+          </div>
+          <div class="jc-group jc-meta" id="jr-restaurant-group" style="display:none;">
+            <label>Restaurant</label>
+            <div id="jr-selected-restaurant" class="jc-pill">Neselectat</div>
+          </div>
+          <div class="jc-group jc-action">
+            <label>&nbsp;</label>
+            <button class="primary" id="jr-add">Adauga inregistrare</button>
+          </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="row" style="align-items:flex-end">
-        <div>
-          <label>Data</label>
-          <input type="date" id="jr-date" />
-        </div>
-        <div>
-          <label>Produs selectat</label>
-          <div id="jr-selected-product" style="padding:8px;background:var(--headerbg);border-radius:4px;min-height:20px;border:1px solid var(--border);">
-            <span style="color:var(--muted);">Niciun produs selectat</span>
-          </div>
-        </div>
-        <div>
-          <label>Cantitate</label>
-          <input type="number" id="jr-qty" min="0" step="0.01" placeholder="0"/>
-        </div>
-        <div>
-          <label>UM</label>
-          <select id="jr-unit">
-            <option value="g">g</option>
-            <option value="ml">ml</option>
-            <option value="buc">buc</option>
-          </select>
-        </div>
-        <div>
-          <button class="primary" id="jr-add">Adaugă înregistrare</button>
-        </div>
-        <div class="spacer"></div>
-        <div>
-          <button id="jr-save-journal">Salvează jurnal în folder</button>
-        </div>
+      <div id="jr-recent-products" class="jr-recent" style="display:none;">
+        <div class="jr-recent-label">Produse recent adaugate (click pentru selectie rapida):</div>
+        <div id="jr-recent-list" class="jr-recent-list"></div>
       </div>
-      
-      <!-- Produse recent folosite -->
-      <div id="jr-recent-products" style="margin:8px 0;padding:8px;background:var(--headerbg);border-radius:6px;display:none;">
-        <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">⏱️ Produse recent adăugate (click pentru selecție rapidă):</div>
-        <div id="jr-recent-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-      </div>
-      
-      <div class="hint" id="jr-base-hint"></div>
 
       <h2 id="jr-title">Intrari pentru</h2>
 
-      <div class="table-wrap">
+      <!-- Fixed header and totals section -->
+      <div class="table-fixed">
         <table>
           <thead>
             <tr>
-              <th class="sticky">Produs</th>
-              <th class="right sticky">Cantitate</th>
-              <th class="sticky">UM</th>
-              <th class="right sticky">Calorii</th>
-              <th class="right sticky">Grăsimi</th>
-              <th class="right sticky">Saturate</th>
-              <th class="right sticky">Carbs/Glucide</th>
-              <th class="right sticky">Zaharuri</th>
-              <th class="right sticky">Fibre</th>
-              <th class="right sticky">Proteine</th>
-              <th class="sticky"></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th >Cal.</th>
+              <th >Grăs.</th>
+              <th >Sat.</th>
+              <th >Carbs</th>
+              <th >Zah.</th>
+              <th >Fibre</th>
+              <th >Prot.</th>
+              <th></th>
             </tr>
           </thead>
           <tbody id="jr-totals" class="totals"></tbody>
           <tbody id="jr-pies" class="pies"></tbody>
+        </table>
+      </div>
+
+      <!-- Scrollable entries section -->
+      <div class="table-scrollable">
+        <table>
+          <thead>
+            <tr>
+              <th>Produs</th>
+              <th >Cant.</th>
+              <th>UM</th>
+              <th >Cal.</th>
+              <th >Grăs.</th>
+              <th >Sat.</th>
+              <th >Carbs</th>
+              <th >Zah.</th>
+              <th >Fibre</th>
+              <th >Prot.</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody id="jr-tbody"></tbody>
         </table>
       </div>
@@ -190,13 +286,8 @@
             <input id="p-tags" placeholder="ex: inghetata, desert, dulce" style="flex:1;" />
             <button id="p-suggest-tags" class="ghost" style="white-space:nowrap;">💡 Sugerează taguri</button>
           </div>
-          <div class="hint">Tagurile ajută la căutare. Exemple: inghetata, desert, lactate, proteine, bio, vegan</div>
+          <div class="hint">Tagurile ajută la cautare. Exemple: inghetata, desert, lactate, proteine, bio, vegan</div>
           
-          <!-- Popular Tags for Quick Selection -->
-          <div id="p-popular-tags-quick" style="margin-top:8px;display:none;">
-            <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">🏷️ Taguri populare (click pentru adăugare):</div>
-            <div id="p-quick-tags-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-          </div>
         </div>
         <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="primary" id="p-save">Salvează produs</button>
@@ -222,10 +313,6 @@
             <div class="hint" style="margin-top:4px;font-size:12px;">
               <span id="p-product-count">0 produse disponibile</span>
             </div>
-            <div id="p-popular-tags" style="margin-top:8px;display:none;">
-              <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">🏷️ Taguri populare (click pentru căutare):</div>
-              <div id="p-tags-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-            </div>
           </div>
           <div>
             <select id="p-filter-category">
@@ -250,7 +337,7 @@
         
         <table>
           <thead><tr>
-            <th>Restaurant</th><th>Categorie</th><th>Produs</th><th>Taguri</th><th>UM bază</th><th class="right">Cal</th><th class="right">Grăsimi</th><th class="right">Sat</th><th class="right">Carb</th><th class="right">Zahar</th><th class="right">Fibre</th><th class="right">Prot</th><th></th>
+            <th>Restaurant</th><th>Categorie</th><th>Produs</th><th>Taguri</th><th>UM bază</th><th >Cal</th><th >Grăsimi</th><th >Sat</th><th >Carb</th><th >Zahar</th><th >Fibre</th><th >Prot</th><th></th>
           </tr></thead>
           <tbody id="p-tbody"></tbody>
         </table>
@@ -272,21 +359,41 @@
       </div>
 
 <h2>Evoluții</h2>
+
+<!-- Toggle pentru tipul de grafic -->
+<div class="chart-toggle">
+  <button id="chart-daily" class="chart-btn active">Zilnic</button>
+  <button id="chart-weekly" class="chart-btn">Săptămânal</button>
+  <button id="chart-monthly" class="chart-btn">Lunar</button>
+</div>
+
+<!-- Grafic zilnic -->
+<div id="daily-chart-container" class="chart-container">
+  <h3>Valori zilnice</h3>
 <div style="height:320px;margin:8px 0 4px">
   <canvas id="sum-chart"></canvas>
+  </div>
+</div>
+
+<!-- Grafic cu medii -->
+<div id="average-chart-container" class="chart-container" style="display: none;">
+  <h3>Valori medii consolidate</h3>
+  <div style="height:320px;margin:8px 0 4px">
+    <canvas id="sum-chart-weekly-monthly"></canvas>
+  </div>
 </div>
 
       <table>
         <thead>
           <tr>
             <th>Data</th>
-            <th class="right">Calorii</th>
-            <th class="right">Grăsimi</th>
-            <th class="right">Saturate</th>
-            <th class="right">Carbs/Glucide</th>
-            <th class="right">Zaharuri</th>
-            <th class="right">Fibre</th>
-            <th class="right">Proteine</th>
+            <th >Cal.</th>
+            <th >Grăs.</th>
+            <th >Sat.</th>
+            <th >Carbs</th>
+            <th >Zah.</th>
+            <th >Fibre</th>
+            <th >Prot.</th>
           </tr>
         </thead>
         <tbody id="sum-tbody"></tbody>
@@ -314,7 +421,7 @@
 
     <!-- COMPARĂ -->
     <section id="tab-compara" class="card" hidden>
-<h2>Compară produse — „Composition Explorer"</h2>
+<h2>Compară produse — „Composition Explorer”</h2>
 
 <div class="cmp-layout">
   <!-- LEFT SIDEBAR -->
@@ -381,7 +488,7 @@
 
     <div id="cmp-weights" class="cmp-weights"></div>
     <div class="hint" style="margin-top:4px">
-      Exemplu obiectiv: Carbohidrați +1.0, Zaharuri −1.5, Grăsimi −0.5 ⇒ „cât mai mulți carbs cu cât mai puțin zahăr și grăsimi".
+      Exemplu obiectiv: Carbohidrați +1.0, Zaharuri −1.5, Grăsimi −0.5 ⇒ „cât mai mulți carbs cu cât mai puțin zahăr și grăsimi”.
     </div>
   </div>
 
@@ -451,7 +558,7 @@
       <!-- Category Tag Mappings -->
       <div style="margin-bottom: 32px;">
         <h3>📂 Mapări Categorie → Taguri</h3>
-        <p class="hint">Definește ce taguri sunt adăugate automat când un produs aparține unei categorii</p>
+        <p class="hint">Definește ce taguri sunt adaugate automat când un produs aparține unei categorii</p>
         
         <div class="row" style="margin-bottom: 16px;">
           <div style="flex: 1;">
@@ -496,11 +603,11 @@
       <!-- Test Search -->
       <div style="margin-bottom: 16px;">
         <h3>🔍 Test Căutare</h3>
-        <p class="hint">Testează cum funcționează căutarea cu sinonimele</p>
+        <p class="hint">Testează cum funcționează cautarea cu sinonimele</p>
         
         <div class="row">
           <div style="flex: 1;">
-            <input id="tax-test-search" placeholder="Introdu un termen de căutare..." />
+            <input id="tax-test-search" placeholder="Introdu un termen de cautare..." />
           </div>
           <div style="align-self: flex-end;">
             <button id="tax-test-search-btn" class="primary">Testează</button>
@@ -530,6 +637,8 @@
             <label style="display:flex;align-items:center;gap:8px">
               <input type="checkbox" id="fs-autosave" checked /> ✅ Salvare automată la fiecare modificare
             </label>
+            <button id="reload-from-json" class="secondary">🔄 Reîncarcă toate datele din JSON</button>
+            <button id="debug-data" class="secondary">🔍 Afișează datele încărcate</button>
             <button id="fs-reload-products">🔄 Reîncarcă produse</button>
             <button id="fs-save-products">💾 Salvează toate datele</button>
             <button id="fs-reload-targets">🔄 Reîncarcă țintele</button>
@@ -617,6 +726,7 @@
   </div>
 
   <script src="app.js"></script>
+  <script src="enhancements.js" defer></script>
   <script>
     (function(){
       const urls=[

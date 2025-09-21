@@ -1,0 +1,49 @@
+========================================
+    FoodApp v2 - Jurnal Calorii & Nutrienti
+========================================
+
+CUM SA FOLOSESTI APLICATIA:
+
+1. DUBLU-CLICK pe "start_server.bat"
+   - Se va porni automat serverul
+   - Se va deschide browser-ul
+   - Aplicația se va încărca automat
+
+2. APLICATIA SE INCARCA AUTOMAT cu:
+   - 1,290+ produse din products.json
+   - 2,381+ înregistrări din journal.json
+   - Toate datele din fișierele JSON
+
+3. DACA NU VEI VEDEA DATELE:
+   - Mergi la tab-ul "Setări"
+   - Click pe "🔄 Reîncarcă toate datele din JSON"
+
+4. PENTRU A OPRII APLICATIA:
+   - În fereastra cmd: apasă orice tastă
+   - Sau închide fereastra cmd
+
+========================================
+CARACTERISTICI:
+
+✅ Dashboard compact cu donut charts
+✅ Jurnal alimentar cu căutare avansată
+✅ Tracking nutrițional complet
+✅ Design responsive pentru mobile
+✅ Baza de date extinsă
+✅ Funcționează offline
+
+========================================
+FISIERE IMPORTANTE:
+
+- start_server.bat = Pornește aplicația
+- index.html = Interfața principală
+- journal.json = Jurnalul alimentar
+- products.json = Baza de date produse
+- targets.json = Țintele nutriționale
+
+========================================
+SUPORT:
+
+Aplicația funcționează în orice browser modern.
+Necesită Python instalat pe sistem.
+

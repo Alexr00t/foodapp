@@ -1,0 +1,191 @@
+[
+  {
+    "id": "general",
+    "name": "General",
+    "description": "General food items",
+    "icon": "🍽️",
+    "color": "#6b7280"
+  },
+  {
+    "id": "appetizers",
+    "name": "Aperitive",
+    "description": "Appetizers and starters",
+    "icon": "🥗",
+    "color": "#10b981"
+  },
+  {
+    "id": "mains",
+    "name": "Feluri principale",
+    "description": "Main courses",
+    "icon": "🍖",
+    "color": "#dc2626"
+  },
+  {
+    "id": "desserts",
+    "name": "Deserturi",
+    "description": "Desserts and sweets",
+    "icon": "🍰",
+    "color": "#8b5cf6"
+  },
+  {
+    "id": "beverages",
+    "name": "Băuturi",
+    "description": "Drinks and beverages",
+    "icon": "🥤",
+    "color": "#3b82f6"
+  },
+  {
+    "id": "snacks",
+    "name": "Gustări",
+    "description": "Snacks and light bites",
+    "icon": "🍿",
+    "color": "#f59e0b"
+  },
+  {
+    "id": "breakfast",
+    "name": "Mic dejun",
+    "description": "Breakfast items",
+    "icon": "🥞",
+    "color": "#f97316"
+  },
+  {
+    "id": "supplements",
+    "name": "Suplimente",
+    "description": "Protein powders and supplements",
+    "icon": "💊",
+    "color": "#6366f1"
+  },
+  {
+    "id": "cornete",
+    "name": "Cornete",
+    "description": "Cornete cu înghețată",
+    "icon": "🍦",
+    "color": "#ff6b6b"
+  },
+  {
+    "id": "inghetata_creme",
+    "name": "Înghețată Creme",
+    "description": "Înghețată cu cremă",
+    "icon": "🍨",
+    "color": "#ff9ff3"
+  },
+  {
+    "id": "inghetata_iaurt",
+    "name": "Înghețată Iaurt",
+    "description": "Înghețată cu iaurt",
+    "icon": "🥛",
+    "color": "#54a0ff"
+  },
+  {
+    "id": "inghetata_fructe",
+    "name": "Înghețată Fructe",
+    "description": "Înghețată cu fructe",
+    "icon": "🍓",
+    "color": "#5f27cd"
+  },
+  {
+    "id": "clatite",
+    "name": "Clătite",
+    "description": "Clătite cu diverse umpluturi",
+    "icon": "🥞",
+    "color": "#00d2d3"
+  },
+  {
+    "id": "gourmet_crepes",
+    "name": "Gourmet Crepes",
+    "description": "Crepes gourmet",
+    "icon": "🥞",
+    "color": "#ff9f43"
+  },
+  {
+    "id": "produse_patiserie",
+    "name": "Produse de Patiserie",
+    "description": "Produse de patiserie",
+    "icon": "🧁",
+    "color": "#ee5a24"
+  },
+  {
+    "id": "diverse",
+    "name": "Diverse",
+    "description": "Produse diverse",
+    "icon": "🍽️",
+    "color": "#6c5ce7"
+  },
+  {
+    "id": "produse_netflix",
+    "name": "Produse Netflix",
+    "description": "Produse speciale Netflix",
+    "icon": "📺",
+    "color": "#e84393"
+  },
+  {
+    "id": "antipasti",
+    "name": "Antipasti",
+    "description": "Aperitive și antreuri",
+    "icon": "🥗",
+    "color": "#3498db"
+  },
+  {
+    "id": "primi_piatti",
+    "name": "Primi Piatti",
+    "description": "Paste și primi piatti",
+    "icon": "🍝",
+    "color": "#e74c3c"
+  },
+  {
+    "id": "zuppe",
+    "name": "Supe",
+    "description": "Supe și ciorbe",
+    "icon": "🍲",
+    "color": "#f39c12"
+  },
+  {
+    "id": "secondi_piatti_carne",
+    "name": "Secundi Piatti di Carne",
+    "description": "Feluri principale cu carne",
+    "icon": "🥩",
+    "color": "#8e44ad"
+  },
+  {
+    "id": "secondi_piatti_pesce",
+    "name": "Secundi Piatti di Pesce",
+    "description": "Feluri principale cu pește",
+    "icon": "🐟",
+    "color": "#1abc9c"
+  },
+  {
+    "id": "pizza_napoletana",
+    "name": "Pizza Napoletana",
+    "description": "Pizza napoletană autentică",
+    "icon": "🍕",
+    "color": "#e67e22"
+  },
+  {
+    "id": "insalate",
+    "name": "Insalate",
+    "description": "Salate și preparate proaspete",
+    "icon": "🥬",
+    "color": "#27ae60"
+  },
+  {
+    "id": "piatti_vegani",
+    "name": "Piatti Vegani",
+    "description": "Preparate vegane",
+    "icon": "🌱",
+    "color": "#16a085"
+  },
+  {
+    "id": "contorni",
+    "name": "Contorni",
+    "description": "Garnituri și contorni",
+    "icon": "🥔",
+    "color": "#95a5a6"
+  },
+  {
+    "id": "pizza_centrale",
+    "name": "Pizza Centrale",
+    "description": "Pizza napoletană autentică de la Centrale Pizza",
+    "icon": "🍕",
+    "color": "#e67e22"
+  }
+]
