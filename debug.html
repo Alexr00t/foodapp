@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug FoodApp</title>
+</head>
+<body>
+    <h1>Debug FoodApp Data Loading</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testFileLoading() {
+            const files = ['products.json', 'restaurants.json', 'categories.json', 'targets.json', 'journal.json', 'menu_items.json', 'taxonomy.json'];
+            const results = document.getElementById('results');
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch('./' + file);
+                    if (response.ok) {
+                        const data = await response.json();
+                        results.innerHTML += `<p>✅ ${file}: Loaded successfully (${Array.isArray(data) ? data.length + ' items' : 'object'})</p>`;
+                    } else {
+                        results.innerHTML += `<p>❌ ${file}: HTTP ${response.status} - ${response.statusText}</p>`;
+                    }
+                } catch (error) {
+                    results.innerHTML += `<p>❌ ${file}: Error - ${error.message}</p>`;
+                }
+            }
+        }
+        
+        testFileLoading();
+    </script>
+</body>
+</html>
