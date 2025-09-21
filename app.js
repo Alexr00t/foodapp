@@ -1106,10 +1106,14 @@ function hideRestaurantDropdown(){
 }
 
 function fillJournalCategoryDropdown(){
-  const sel = $('#jr-filter-category');
-  if(!sel) return;
+  console.log('🔄 Filling journal category dropdown...', CATEGORIES.length, 'categories');
+  const sel = document.getElementById('jr-filter-category');
+  if(!sel) {
+    console.warn('⚠️ Journal category dropdown not found: jr-filter-category');
+    return;
+  }
   const current = sel.value;
-  sel.innerHTML = '<option value="">Toate categoriile</option>';
+  sel.innerHTML = '<option value="">📂 Toate categoriile</option>';
   CATEGORIES.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.id;
@@ -1117,6 +1121,7 @@ function fillJournalCategoryDropdown(){
     sel.appendChild(opt);
   });
   if(current && CATEGORIES.some(c => c.id === current)) sel.value = current;
+  console.log('✅ Filled journal category dropdown');
 }
 
 function clearJournalFilters(){
@@ -1843,12 +1848,16 @@ function renderProductTags(tags) {
 
 // Fill restaurant dropdowns
 function fillRestaurantDropdowns(){
+  console.log('🔄 Filling restaurant dropdowns...', RESTAURANTS.length, 'restaurants');
   const dropdowns = ['p-restaurant', 'p-filter-restaurant', 'bulk-restaurant'];
   dropdowns.forEach(id => {
     const sel = document.getElementById(id);
-    if(!sel) return;
+    if(!sel) {
+      console.warn(`⚠️ Restaurant dropdown not found: ${id}`);
+      return;
+    }
     const current = sel.value;
-    sel.innerHTML = '<option value="">Selectează restaurant...</option>';
+    sel.innerHTML = '<option value="">🏪 Selectează restaurant...</option>';
     RESTAURANTS.forEach(r => {
       const opt = document.createElement('option');
       opt.value = r.id;
@@ -1856,17 +1865,22 @@ function fillRestaurantDropdowns(){
       sel.appendChild(opt);
     });
     if(current && RESTAURANTS.some(r => r.id === current)) sel.value = current;
+    console.log(`✅ Filled restaurant dropdown: ${id}`);
   });
 }
 
 // Fill category dropdowns
 function fillCategoryDropdowns(){
+  console.log('🔄 Filling category dropdowns...', CATEGORIES.length, 'categories');
   const dropdowns = ['p-category', 'p-filter-category', 'bulk-category'];
   dropdowns.forEach(id => {
     const sel = document.getElementById(id);
-    if(!sel) return;
+    if(!sel) {
+      console.warn(`⚠️ Category dropdown not found: ${id}`);
+      return;
+    }
     const current = sel.value;
-    sel.innerHTML = '<option value="">Selectează categorie...</option>';
+    sel.innerHTML = '<option value="">📂 Selectează categorie...</option>';
     CATEGORIES.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
@@ -1874,6 +1888,7 @@ function fillCategoryDropdowns(){
       sel.appendChild(opt);
     });
     if(current && CATEGORIES.some(c => c.id === current)) sel.value = current;
+    console.log(`✅ Filled category dropdown: ${id}`);
   });
 }
 
