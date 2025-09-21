@@ -1,0 +1,44 @@
+[
+  {
+    "id": "default",
+    "name": "Băcănie",
+    "description": "Produse de bază și alimente din băcănie",
+    "color": "#6b7280",
+    "icon": "🛒"
+  },
+  {
+    "id": "pita_factory",
+    "name": "Pita Factory",
+    "description": "Mediterranean fast food restaurant",
+    "color": "#f59e0b",
+    "icon": "🥙"
+  },
+  {
+    "id": "poke_house",
+    "name": "Poke House",
+    "description": "Hawaiian poke bowl restaurant",
+    "color": "#10b981",
+    "icon": "🐟"
+  },
+  {
+    "id": "gelateria_la_romana",
+    "name": "Gelateria La Romana",
+    "description": "Gelaterie italiană cu înghețată artizanală și clătite",
+    "color": "#ff6b6b",
+    "icon": "🍦"
+  },
+  {
+    "id": "il_calcio",
+    "name": "Il Calcio",
+    "description": "Restaurant italian cu paste, pizza și preparate tradiționale",
+    "color": "#2ecc71",
+    "icon": "🍝"
+  },
+  {
+    "id": "centrale_pizza",
+    "name": "Centrale Pizza",
+    "description": "Pizzerie autentică cu pizza napoletană și ingrediente premium",
+    "color": "#e67e22",
+    "icon": "🍕"
+  }
+]

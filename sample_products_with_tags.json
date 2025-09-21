@@ -1,0 +1,84 @@
+[
+  {
+    "name": "Vanilla IceCream",
+    "base": "100g",
+    "gPerPiece": null,
+    "mlPerPiece": null,
+    "cal": 207,
+    "fat": 11,
+    "sat": 7,
+    "carb": 24,
+    "glu": 24,
+    "sug": 21,
+    "fib": 0.7,
+    "pro": 3.5,
+    "tags": ["inghetata", "desert", "dulce"]
+  },
+  {
+    "name": "Gelato al cioccolato",
+    "base": "100g",
+    "gPerPiece": null,
+    "mlPerPiece": null,
+    "cal": 216,
+    "fat": 11.3,
+    "sat": 6.8,
+    "carb": 25.4,
+    "glu": 25.4,
+    "sug": 22.1,
+    "fib": 1.2,
+    "pro": 3.2,
+    "tags": ["inghetata", "desert", "ciocolata"]
+  },
+  {
+    "name": "Înghețată cu fructe",
+    "base": "100g",
+    "gPerPiece": null,
+    "mlPerPiece": null,
+    "cal": 127,
+    "fat": 0.2,
+    "sat": 0.1,
+    "carb": 30.5,
+    "glu": 30.5,
+    "sug": 28.7,
+    "fib": 0.7,
+    "pro": 0.4,
+    "tags": ["inghetata", "desert", "fructe"]
+  },
+  {
+    "name": "Tort de ciocolată",
+    "base": "100g",
+    "gPerPiece": null,
+    "mlPerPiece": null,
+    "cal": 371,
+    "fat": 15.4,
+    "sat": 8.1,
+    "carb": 51.6,
+    "glu": 51.6,
+    "sug": 42.7,
+    "fib": 2.8,
+    "pro": 4.9,
+    "tags": ["desert", "tort", "ciocolata", "dulce"]
+  },
+  {
+    "name": "Pudding de vanilie",
+    "base": "100g",
+    "gPerPiece": null,
+    "mlPerPiece": null,
+    "cal": 113,
+    "fat": 2.8,
+    "sat": 1.7,
+    "carb": 18.4,
+    "glu": 18.4,
+    "sug": 15.2,
+    "fib": 0.1,
+    "pro": 3.2,
+    "tags": ["desert", "dulce", "vanilie"]
+  }
+]
+
+
+
+
+
+
+

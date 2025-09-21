@@ -1,0 +1,16 @@
+{
+  "name": "foodapp",
+  "version": "1.0.0",
+  "description": "Calorie and Nutrition Tracking App",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 --cors -o",
+    "dev": "http-server -p 8000 --cors -o -c-1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "keywords": ["calorie", "nutrition", "tracking", "food"],
+  "author": "FoodApp",
+  "license": "MIT"
+}

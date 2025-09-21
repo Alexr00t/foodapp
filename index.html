@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <title>Jurnal Calorii & Nutrienți — FoodApp</title>
+  <link rel="stylesheet" href="style.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <h1>Jurnal Calorii & Nutrienți</h1>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="jurnal">Jurnal</button>
+      <button class="tab" data-tab="produse">Produse</button>
+      <button class="tab" data-tab="sumar">Evoluții</button>
+      <button class="tab" data-tab="tinte">Targets</button>
+      <button class="tab" data-tab="compara">Compară</button>
+      <button class="tab" data-tab="taxonomie">Taxonomie</button>
+      <div class="spacer"></div>
+      <button class="tab" data-tab="settings">Setări</button>
+    </div>
+
+    <!-- JURNAL -->
+    <section id="tab-jurnal" class="card">
+      <!-- Filtre pentru selecția produselor -->
+      <div class="row" style="margin-bottom:16px;padding:12px;background:var(--headerbg);border-radius:8px;">
+        <div>
+          <div style="position:relative;">
+            <input id="jr-product-search" placeholder="🔍 Caută și selectează produs..." style="min-width:300px;" autocomplete="off" />
+            <div id="jr-product-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:400px;overflow-y:auto;z-index:1000;display:none;">
+              <!-- Options will be populated dynamically -->
+            </div>
+          </div>
+          <div class="hint" style="margin-top:4px;font-size:12px;">
+            <span id="jr-product-count">0 produse disponibile</span>
+          </div>
+          <div id="jr-popular-tags" style="margin-top:8px;display:none;">
+            <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">🏷️ Taguri populare (click pentru căutare):</div>
+            <div id="jr-tags-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+          </div>
+        </div>
+        <div>
+          <select id="jr-filter-category">
+            <option value="">📂 Toate categoriile</option>
+          </select>
+        </div>
+        <div>
+          <div style="position:relative;">
+            <button id="jr-restaurant-dropdown-btn" type="button" style="width:200px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:4px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+              <span id="jr-restaurant-btn-text">🏪 Toate restaurantele</span>
+              <span style="font-size:12px;">▼</span>
+            </button>
+            <div id="jr-restaurant-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:200px;overflow-y:auto;z-index:1000;display:none;padding:8px;">
+              <!-- Checkboxes will be populated dynamically -->
+            </div>
+          </div>
+        </div>
+        <div style="align-self:flex-end;">
+          <button id="jr-clear-filters" class="ghost">Curăță filtrele</button>
+        </div>
+      </div>
+
+      <div class="row" style="align-items:flex-end">
+        <div>
+          <label>Data</label>
+          <input type="date" id="jr-date" />
+        </div>
+        <div>
+          <label>Produs selectat</label>
+          <div id="jr-selected-product" style="padding:8px;background:var(--headerbg);border-radius:4px;min-height:20px;border:1px solid var(--border);">
+            <span style="color:var(--muted);">Niciun produs selectat</span>
+          </div>
+        </div>
+        <div>
+          <label>Cantitate</label>
+          <input type="number" id="jr-qty" min="0" step="0.01" placeholder="0"/>
+        </div>
+        <div>
+          <label>UM</label>
+          <select id="jr-unit">
+            <option value="g">g</option>
+            <option value="ml">ml</option>
+            <option value="buc">buc</option>
+          </select>
+        </div>
+        <div>
+          <button class="primary" id="jr-add">Adaugă înregistrare</button>
+        </div>
+        <div class="spacer"></div>
+        <div>
+          <button id="jr-save-journal">Salvează jurnal în folder</button>
+        </div>
+      </div>
+      
+      <!-- Produse recent folosite -->
+      <div id="jr-recent-products" style="margin:8px 0;padding:8px;background:var(--headerbg);border-radius:6px;display:none;">
+        <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">⏱️ Produse recent adăugate (click pentru selecție rapidă):</div>
+        <div id="jr-recent-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+      </div>
+      
+      <div class="hint" id="jr-base-hint"></div>
+
+      <h2 id="jr-title">Intrari pentru</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="sticky">Produs</th>
+              <th class="right sticky">Cantitate</th>
+              <th class="sticky">UM</th>
+              <th class="right sticky">Calorii</th>
+              <th class="right sticky">Grăsimi</th>
+              <th class="right sticky">Saturate</th>
+              <th class="right sticky">Carbs/Glucide</th>
+              <th class="right sticky">Zaharuri</th>
+              <th class="right sticky">Fibre</th>
+              <th class="right sticky">Proteine</th>
+              <th class="sticky"></th>
+            </tr>
+          </thead>
+          <tbody id="jr-totals" class="totals"></tbody>
+          <tbody id="jr-pies" class="pies"></tbody>
+          <tbody id="jr-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PRODUSE -->
+    <section id="tab-produse" class="card" hidden>
+      <!-- Adaugă / Editează Produs Section -->
+      <div style="margin-bottom: 32px;">
+        <h2>Adaugă / editează produs</h2>
+        
+        <!-- Restaurant and Category Selection -->
+        <div class="grid" style="margin-bottom:12px">
+          <div>
+            <label>Restaurant / Brand</label>
+            <select id="p-restaurant">
+              <option value="">Selectează restaurant...</option>
+            </select>
+          </div>
+          <div>
+            <label>Categorie</label>
+            <select id="p-category">
+              <option value="">Selectează categorie...</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="grid">
+          <div>
+            <label>Denumire produs</label>
+            <input id="p-name" placeholder="ex: Iaurt simplu 2%" />
+          </div>
+          <div>
+            <label>UM bază</label>
+            <select id="p-base">
+              <option value="100g">100 g</option>
+              <option value="100ml">100 ml</option>
+              <option value="bucata">bucata</option>
+            </select>
+          </div>
+          <div>
+            <label>Greutate / bucată (g)</label>
+            <input type="number" id="p-gbuc" min="0" step="0.01" placeholder="ex: 60" />
+          </div>
+          <div>
+            <label>Volum / bucată (ml)</label>
+            <input type="number" id="p-mlbuc" min="0" step="0.01" placeholder="opțional" />
+          </div>
+        </div>
+        <div class="grid" style="margin-top:8px">
+          <div><label>Calorii (kcal)</label><input type="number" id="p-cal" step="0.01" min="0"></div>
+          <div><label>Grăsimi (g)</label><input type="number" id="p-fat" step="0.01" min="0"></div>
+          <div><label>Grăsimi saturate (g)</label><input type="number" id="p-sat" step="0.01" min="0"></div>
+          <div><label>Carbs/Glucide (g)</label><input type="number" id="p-carb" step="0.01" min="0"></div>
+          <div><label>Zaharuri (g)</label><input type="number" id="p-sug" step="0.01" min="0"></div>
+          <div><label>Fibre (g)</label><input type="number" id="p-fib" step="0.01" min="0"></div>
+          <div><label>Proteine (g)</label><input type="number" id="p-pro" step="0.01" min="0"></div>
+        </div>
+        
+        <!-- Tag Management -->
+        <div style="margin-top:16px;">
+          <label>🏷️ Taguri (separate prin virgulă)</label>
+          <div style="display:flex;gap:8px;align-items:flex-end;">
+            <input id="p-tags" placeholder="ex: inghetata, desert, dulce" style="flex:1;" />
+            <button id="p-suggest-tags" class="ghost" style="white-space:nowrap;">💡 Sugerează taguri</button>
+          </div>
+          <div class="hint">Tagurile ajută la căutare. Exemple: inghetata, desert, lactate, proteine, bio, vegan</div>
+          
+          <!-- Popular Tags for Quick Selection -->
+          <div id="p-popular-tags-quick" style="margin-top:8px;display:none;">
+            <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">🏷️ Taguri populare (click pentru adăugare):</div>
+            <div id="p-quick-tags-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+          </div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="primary" id="p-save">Salvează produs</button>
+          <button class="ghost" id="p-clear">Curăță formular</button>
+          <button class="ghost" id="p-bulk-add">Adaugă meniu complet</button>
+        </div>
+        <div class="hint">Valorile sunt raportate la UM de bază aleasă (100 g / 100 ml / bucată). Glucidele sunt unificate cu carbohidrații.</div>
+      </div>
+
+      <!-- Lista Produse Section -->
+      <div>
+        <h2>Lista produse</h2>
+        
+        <!-- Filters -->
+        <div class="row" style="margin-bottom:12px;padding:12px;background:var(--headerbg);border-radius:8px;">
+          <div>
+            <div style="position:relative;">
+              <input id="p-product-search" placeholder="🔍 Caută produs..." style="min-width:300px;" autocomplete="off" />
+              <div id="p-product-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:400px;overflow-y:auto;z-index:1000;display:none;">
+                <!-- Options will be populated dynamically -->
+              </div>
+            </div>
+            <div class="hint" style="margin-top:4px;font-size:12px;">
+              <span id="p-product-count">0 produse disponibile</span>
+            </div>
+            <div id="p-popular-tags" style="margin-top:8px;display:none;">
+              <div style="font-size:12px;color:var(--accent);margin-bottom:4px;">🏷️ Taguri populare (click pentru căutare):</div>
+              <div id="p-tags-list" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+            </div>
+          </div>
+          <div>
+            <select id="p-filter-category">
+              <option value="">📂 Toate categoriile</option>
+            </select>
+          </div>
+          <div>
+            <div style="position:relative;">
+              <button id="p-restaurant-dropdown-btn" type="button" style="width:200px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:4px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+                <span id="p-restaurant-btn-text">🏪 Toate restaurantele</span>
+                <span style="font-size:12px;">▼</span>
+              </button>
+              <div id="p-restaurant-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:200px;overflow-y:auto;z-index:1000;display:none;padding:8px;">
+                <!-- Checkboxes will be populated dynamically -->
+              </div>
+            </div>
+          </div>
+          <div style="align-self:flex-end;">
+            <button id="p-clear-filters" class="ghost">Curăță filtrele</button>
+          </div>
+        </div>
+        
+        <table>
+          <thead><tr>
+            <th>Restaurant</th><th>Categorie</th><th>Produs</th><th>Taguri</th><th>UM bază</th><th class="right">Cal</th><th class="right">Grăsimi</th><th class="right">Sat</th><th class="right">Carb</th><th class="right">Zahar</th><th class="right">Fibre</th><th class="right">Prot</th><th></th>
+          </tr></thead>
+          <tbody id="p-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SUMAR -->
+    <section id="tab-sumar" class="card" hidden>
+      <div class="row">
+        <div>
+          <label>De la</label>
+          <input type="date" id="sum-from" />
+        </div>
+        <div>
+          <label>Până la</label>
+          <input type="date" id="sum-to" />
+        </div>
+        <div style="align-self:flex-end"><button id="sum-apply">Aplică</button></div>
+      </div>
+
+<h2>Evoluții</h2>
+<div style="height:320px;margin:8px 0 4px">
+  <canvas id="sum-chart"></canvas>
+</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th class="right">Calorii</th>
+            <th class="right">Grăsimi</th>
+            <th class="right">Saturate</th>
+            <th class="right">Carbs/Glucide</th>
+            <th class="right">Zaharuri</th>
+            <th class="right">Fibre</th>
+            <th class="right">Proteine</th>
+          </tr>
+        </thead>
+        <tbody id="sum-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- ȚINTE -->
+    <section id="tab-tinte" class="card" hidden>
+      <h2>Targets</h2>
+      <div class="grid">
+        <div><label>Calorii (kcal)</label><input type="number" id="tg-cal" min="0" step="1" placeholder="ex: 2000"></div>
+        <div><label>Grăsimi (g)</label><input type="number" id="tg-fat" min="0" step="0.1" placeholder="ex: 70"></div>
+        <div><label>Grăsimi saturate (g)</label><input type="number" id="tg-sat" min="0" step="0.1" placeholder="ex: 20"></div>
+        <div><label>Carbs/Glucide (g)</label><input type="number" id="tg-carb" min="0" step="0.1" placeholder="ex: 260"></div>
+        <div><label>Zaharuri (g)</label><input type="number" id="tg-sug" min="0" step="0.1" placeholder="ex: 50"></div>
+        <div><label>Fibre (g)</label><input type="number" id="tg-fib" min="0" step="0.1" placeholder="ex: 30"></div>
+        <div><label>Proteine (g)</label><input type="number" id="tg-pro" min="0" step="0.1" placeholder="ex: 130"></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="primary" id="tg-save">Salvează țintele</button>
+        <button id="tg-reset">Reset</button>
+      </div>
+      <div class="hint">Țintele sunt globale (valabile pentru toate zilele). Le poți modifica oricând.</div>
+    </section>
+
+    <!-- COMPARĂ -->
+    <section id="tab-compara" class="card" hidden>
+<h2>Compară produse — „Composition Explorer"</h2>
+
+<div class="cmp-layout">
+  <!-- LEFT SIDEBAR -->
+  <div class="cmp-left">
+    <div class="cmp-block">
+      <label>Valori</label>
+      <select id="cmp-unit">
+        <option value="per100g">per 100 g / 100 ml</option>
+        <option value="perServing">per porție (bucată)</option>
+      </select>
+    </div>
+    <div class="cmp-block">
+      <div style="position:relative;">
+        <input id="cmp-product-search" placeholder="🔍 Caută produs..." style="width:100%;" autocomplete="off" />
+        <div id="cmp-product-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:400px;overflow-y:auto;z-index:1000;display:none;">
+          <!-- Options will be populated dynamically -->
+        </div>
+      </div>
+      <div class="hint" style="margin-top:4px;font-size:12px;">
+        <span id="cmp-product-count">0 produse disponibile</span>
+      </div>
+    </div>
+    <div class="cmp-block">
+      <select id="cmp-category">
+        <option value="">📂 Toate categoriile</option>
+      </select>
+    </div>
+    <div class="cmp-block">
+      <div style="position:relative;">
+        <button id="cmp-restaurant-dropdown-btn" type="button" style="width:100%;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:4px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;">
+          <span id="cmp-restaurant-btn-text">🏪 Toate restaurantele</span>
+          <span style="font-size:12px;">▼</span>
+        </button>
+        <div id="cmp-restaurant-dropdown" style="position:absolute;top:100%;left:0;right:0;background:var(--bg);border:1px solid var(--border);border-radius:4px;max-height:200px;overflow-y:auto;z-index:1000;display:none;padding:8px;">
+          <!-- Checkboxes will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <div class="cmp-block">
+      <label>Axa X</label>
+      <select id="cmp-x"></select>
+    </div>
+    <div class="cmp-block">
+      <label>Axa Y</label>
+      <select id="cmp-y"></select>
+    </div>
+    <div class="cmp-block">
+      <label>Mărime bulă</label>
+      <select id="cmp-bubble"></select>
+    </div>
+    <div class="cmp-block">
+      <label>Culoare după</label>
+      <select id="cmp-color"></select>
+    </div>
+
+    <div class="cmp-block row" style="align-items:center;margin-top:8px">
+      <span class="badgelike">Scop: setează ponderi (− minimizezi, + maximizezi)</span>
+      <button id="cmp-reset" class="ghost">Reset ponderi</button>
+      <button id="cmp-export" class="ghost">Export scoruri (CSV)</button>
+      <button id="cmp-debug" class="ghost">🐛 Debug valori</button>
+      <button id="cmp-clear-filters" class="ghost">Curăță filtrele</button>
+    </div>
+
+    <div id="cmp-weights" class="cmp-weights"></div>
+    <div class="hint" style="margin-top:4px">
+      Exemplu obiectiv: Carbohidrați +1.0, Zaharuri −1.5, Grăsimi −0.5 ⇒ „cât mai mulți carbs cu cât mai puțin zahăr și grăsimi".
+    </div>
+  </div>
+
+  <!-- RIGHT AREA -->
+  <div class="cmp-right">
+    <div class="card" style="margin-top:0">
+      <canvas id="cmp-scatter" height="320"></canvas>
+      <div class="hint" style="margin-top:6px">Tip: click pe un punct pentru detalii & radar.</div>
+      <div id="cmp-selected" class="row" style="display:none;margin-top:8px">
+        <div class="col">
+          <div class="badgelike" id="cmp-sel-name"></div>
+          <div class="badgelike" id="cmp-sel-brand"></div>
+          <div class="badgelike" id="cmp-sel-tags"></div>
+          <div style="margin-top:8px">
+            <button id="cmp-add-to-journal" class="primary">➕ Adaugă în jurnal</button>
+          </div>
+        </div>
+        <div class="col"><canvas id="cmp-radar" height="220"></canvas></div>
+        <div class="col">
+          <table style="width:100%" id="cmp-sel-table"></table>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-top:14px">Top potriviri (după ponderile tale)</h2>
+    <table style="width:100%">
+      <thead>
+        <tr>
+          <th>#</th><th>Produs</th><th>UM bază</th><th>Scor</th>
+          <th>Carb</th><th>Zah</th><th>Grăs</th><th>Sat</th><th>Fibr</th><th>Prot</th><th>kcal</th><th>Acțiuni</th>
+        </tr>
+      </thead>
+      <tbody id="cmp-top"></tbody>
+    </table>
+  </div>
+</div>
+    </section>
+
+    <!-- TAXONOMIE -->
+    <section id="tab-taxonomie" class="card" hidden>
+      <h2>🏷️ Administrare Taxonomie și Taguri</h2>
+      
+      <!-- Tag Aliases Management -->
+      <div style="margin-bottom: 32px;">
+        <h3>📝 Tag Aliases (Sinonime)</h3>
+        <p class="hint">Gestionează sinonimele pentru taguri. De exemplu: "inghetata" poate avea sinonimele ["înghețată", "ice cream", "gelato"]</p>
+        
+        <div class="row" style="margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label>Tag canonic</label>
+            <input id="tax-canonical-tag" placeholder="ex: inghetata" />
+          </div>
+          <div style="flex: 2;">
+            <label>Sinonime (separate prin virgulă)</label>
+            <input id="tax-aliases" placeholder="ex: înghețată, ice cream, gelato" />
+          </div>
+          <div style="align-self: flex-end;">
+            <button id="tax-add-alias" class="primary">Adaugă</button>
+          </div>
+        </div>
+        
+        <div id="tax-aliases-list" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 8px;">
+          <!-- Aliases will be populated here -->
+        </div>
+      </div>
+      
+      <!-- Category Tag Mappings -->
+      <div style="margin-bottom: 32px;">
+        <h3>📂 Mapări Categorie → Taguri</h3>
+        <p class="hint">Definește ce taguri sunt adăugate automat când un produs aparține unei categorii</p>
+        
+        <div class="row" style="margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label>Categorie</label>
+            <select id="tax-category-select">
+              <option value="">Selectează categorie...</option>
+            </select>
+          </div>
+          <div style="flex: 2;">
+            <label>Taguri (separate prin virgulă)</label>
+            <input id="tax-category-tags" placeholder="ex: inghetata, desert" />
+          </div>
+          <div style="align-self: flex-end;">
+            <button id="tax-add-category-mapping" class="primary">Adaugă</button>
+          </div>
+        </div>
+        
+        <div id="tax-category-mappings-list" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 8px;">
+          <!-- Category mappings will be populated here -->
+        </div>
+      </div>
+      
+      <!-- Tag Statistics -->
+      <div style="margin-bottom: 32px;">
+        <h3>📊 Statistici Taguri</h3>
+        <p class="hint">Vezi câte produse folosesc fiecare tag</p>
+        
+        <div id="tax-tag-stats" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 8px;">
+          <!-- Tag statistics will be populated here -->
+        </div>
+      </div>
+      
+      <!-- Actions -->
+      <div class="row" style="margin-bottom: 16px;">
+        <button id="tax-save-changes" class="primary">💾 Salvează modificările</button>
+        <button id="tax-reload-taxonomy" class="ghost">🔄 Reîncarcă din fișier</button>
+        <button id="tax-export-taxonomy" class="ghost">📤 Exportă taxonomia</button>
+        <button id="tax-import-taxonomy" class="ghost">📥 Importă taxonomia</button>
+        <input type="file" id="tax-import-file" accept=".json" style="display: none;" />
+      </div>
+      
+      <!-- Test Search -->
+      <div style="margin-bottom: 16px;">
+        <h3>🔍 Test Căutare</h3>
+        <p class="hint">Testează cum funcționează căutarea cu sinonimele</p>
+        
+        <div class="row">
+          <div style="flex: 1;">
+            <input id="tax-test-search" placeholder="Introdu un termen de căutare..." />
+          </div>
+          <div style="align-self: flex-end;">
+            <button id="tax-test-search-btn" class="primary">Testează</button>
+          </div>
+        </div>
+        
+        <div id="tax-search-results" style="margin-top: 8px; padding: 8px; background: var(--headerbg); border-radius: 4px; display: none;">
+          <!-- Search results will be shown here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS + FILE MANAGEMENT -->
+    <section id="tab-settings" class="card" hidden>
+      <div class="row">
+        <div class="col">
+          <h2>💾 Salvare automată în fișiere</h2>
+          <p class="hint">Selectează un folder pentru a salva automat toate datele tale în fișiere JSON. Recomandăm să alegi folderul unde se află index.html. Funcționează în Chrome/Edge.</p>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <button id="fs-pick" class="primary">📁 Selectează folder pentru salvare</button>
+            <span id="fs-status" class="hint">📂 Niciun folder selectat</span>
+          </div>
+          <div id="current-folder-info" class="hint" style="margin-bottom:8px;padding:8px;background:var(--headerbg);border-radius:8px;display:none;">
+            <strong>📁 Folder curent:</strong> <span id="current-folder-path"></span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:8px">
+              <input type="checkbox" id="fs-autosave" checked /> ✅ Salvare automată la fiecare modificare
+            </label>
+            <button id="fs-reload-products">🔄 Reîncarcă produse</button>
+            <button id="fs-save-products">💾 Salvează toate datele</button>
+            <button id="fs-reload-targets">🔄 Reîncarcă țintele</button>
+            <button id="fs-autotag-products">🏷️ Autotag toate produsele</button>
+          </div>
+          <div class="hint">📋 Se salvează: produse, jurnal, ținte, restaurante, categorii, meniuri</div>
+        </div>
+        <div class="col">
+          <h2>📤 Export / Import manual</h2>
+          <p class="hint">Pentru backup manual sau partajare cu alte dispozitive.</p>
+          <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+            <button id="bk-export-products">📥 Descarcă produse</button>
+            <button id="bk-export-journal">📥 Descarcă jurnal</button>
+          </div>
+          <div style="margin-bottom:8px"><label>📤 Încarcă produse din fișier</label><input type="file" id="bk-import-products" accept="application/json" /></div>
+          <div><label>📤 Încarcă jurnal din fișier</label><input type="file" id="bk-import-journal" accept="application/json" /></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Bulk Import Modal -->
+  <div id="bulk-import-modal" class="modal" hidden onclick="if(event.target.id==='bulk-import-modal') hideBulkImportModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Adaugă meniu complet</h3>
+        <button id="bulk-close" class="modal-close" onclick="hideBulkImportModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div>
+            <label>Restaurant</label>
+            <select id="bulk-restaurant">
+              <option value="">Selectează restaurant...</option>
+            </select>
+          </div>
+          <div>
+            <label>Categorie</label>
+            <select id="bulk-category">
+              <option value="">Selectează categorie...</option>
+            </select>
+          </div>
+        </div>
+        
+        <div style="margin:16px 0">
+          <label>Meniu (JSON format)</label>
+          <textarea id="bulk-menu-data" rows="15" placeholder='[
+  {
+    "name": "Pizza Margherita",
+    "base": "bucata",
+    "gPerPiece": 300,
+    "cal": 800,
+    "fat": 20,
+    "sat": 8,
+    "carb": 100,
+    "sug": 5,
+    "fib": 3,
+    "pro": 35
+  },
+  {
+    "name": "Pasta Carbonara",
+    "base": "bucata",
+    "gPerPiece": 350,
+    "cal": 650,
+    "fat": 25,
+    "sat": 12,
+    "carb": 80,
+    "sug": 3,
+    "fib": 2,
+    "pro": 28
+  }
+]'></textarea>
+        </div>
+        
+        <div class="hint">
+          <strong>Format JSON:</strong> Array de obiecte cu proprietățile: name, base, gPerPiece, mlPerPiece, cal, fat, sat, carb, sug, fib, pro
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="ghost" id="bulk-cancel" onclick="hideBulkImportModal()">Anulează</button>
+        <button class="primary" id="bulk-import" onclick="importBulkMenu()">Importă meniul</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function(){
+      const urls=[
+        'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
+        'https://unpkg.com/chart.js@4.4.1/dist/chart.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js'
+      ];
+      let i=0, loaded=false;
+      function tryLoad(){
+        if(loaded||i>=urls.length) return;
+        const s=document.createElement('script');
+        s.src=urls[i++]; s.async=true; s.defer=true; s.crossOrigin='anonymous'; s.referrerPolicy='no-referrer';
+        const t=setTimeout(()=>{ s.onerror && s.onerror(); }, 2000);
+        s.onload=()=>{ if(loaded) return; loaded=true; clearTimeout(t); console.log('Chart.js loaded'); };
+        s.onerror=()=>{ clearTimeout(t); console.warn('Chart.js load failed; trying next…'); tryLoad(); };
+        document.body.appendChild(s);
+      }
+      tryLoad();
+    })();
+  </script>
+</body>
+</html>

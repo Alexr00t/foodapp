@@ -1,0 +1,57 @@
+{
+  "tag_aliases": {
+    "inghetata": ["înghețată", "inghetată", "gelato", "ice cream", "ice-cream", "înghețată", "gelato", "vanilie", "ciocolata", "fructe"],
+    "desert": ["desert", "deserturi", "dulce", "sweet", "dessert", "desserts", "tort", "prăjitură", "biscuit", "ciocolată"],
+    "lactate": ["lactate", "lactos", "lacto", "dairy", "lapte", "iaurt", "brânză", "smântână", "unt"],
+    "carne": ["carne", "meat", "porc", "vita", "pui", "curcan", "șuncă", "cârnați", "salam", "bacon"],
+    "vegetale": ["vegetale", "vegetables", "legume", "salată", "roșii", "castraveți", "morcovi", "ceapă", "usturoi"],
+    "fructe": ["fructe", "fruits", "măr", "banană", "portocală", "lămâie", "struguri", "cirese", "prune"],
+    "cereale": ["cereale", "cereals", "ovăz", "orez", "grâu", "secară", "porumb", "quinoa", "bulgur"],
+    "proteine": ["proteine", "protein", "proteic", "whey", "casein", "soia", "tofu", "tempeh", "seitan"],
+    "grasimi": ["grăsimi", "fats", "ulei", "unt", "margarină", "avocado", "nuci", "semințe", "oliu"],
+    "carbohidrati": ["carbohidrați", "carbs", "carbohydrates", "glucide", "zaharuri", "sugar", "miere", "sirop"],
+    "fibre": ["fibre", "fiber", "fibros", "tărâțe", "psyllium", "chia", "in", "ovăz"],
+    "sare": ["sare", "salt", "sărat", "salted", "saramură", "conservă"],
+    "picant": ["picant", "spicy", "hot", "ardei", "piper", "chili", "wasabi"],
+    "bio": ["bio", "organic", "ecologic", "natural", "eco"],
+    "fara_lactoza": ["fără lactoză", "lactose free", "lactoza", "lactose"],
+    "fara_gluten": ["fără gluten", "gluten free", "gluten", "gluten-free"],
+    "vegan": ["vegan", "vegană", "plant-based", "vegetal", "vegetarian"],
+    "vegetarian": ["vegetarian", "vegetariană", "ovo-lacto", "lacto-ovo"],
+    "keto": ["keto", "ketogenic", "low carb", "scăzut carbohidrați"],
+    "low_cal": ["low calorie", "scăzut calorii", "dietetic", "light", "diet"],
+    "high_protein": ["high protein", "mare proteine", "proteic", "proteină"],
+    "snack": ["snack", "gustări", "aperitiv", "biscuit", "cracker", "chips"],
+    "bauturi": ["băuturi", "drinks", "suc", "apă", "ceai", "cafea", "smoothie"],
+    "condimente": ["condimente", "spices", "sosuri", "mustar", "ketchup", "maioneză"]
+  },
+  "category_implies_tags": {
+    "Dairy": ["lactate"],
+    "Meat": ["carne"],
+    "Vegetables": ["vegetale"],
+    "Fruits": ["fructe"],
+    "Grains": ["cereale"],
+    "Protein": ["proteine"],
+    "Fats": ["grasimi"],
+    "Carbs": ["carbohidrati"],
+    "Desserts": ["desert"],
+    "Snacks": ["snack"],
+    "Beverages": ["bauturi"],
+    "Condiments": ["condimente"],
+    "IceCream": ["inghetata", "desert"],
+    "Dessert": ["desert"],
+    "Sweets": ["desert", "dulce"]
+  },
+  "normalization_rules": {
+    "remove_diacritics": true,
+    "lowercase": true,
+    "remove_punctuation": true
+  }
+}
+
+
+
+
+
+
+
