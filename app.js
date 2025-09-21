@@ -3561,28 +3561,49 @@ function addProductToJournal(productName){
 // ===== Portable mode helpers =====
 async function tryLoadJSON(name){
   try{
+    console.log(`🔄 Loading ${name}.json...`);
     const resp = await fetch('./'+name+'.json', {cache:'no-store'});
-    if(!resp.ok) return false;
+    console.log(`📡 Response for ${name}.json:`, resp.status, resp.statusText);
+    if(!resp.ok) {
+      console.warn(`❌ Failed to load ${name}.json: ${resp.status} ${resp.statusText}`);
+      return false;
+    }
     const data = await resp.json();
+    console.log(`✅ Loaded ${name}.json:`, data);
+    
     if(name==='products' && Array.isArray(data)){
       PRODUCTS = migrateProducts(data); saveProducts(PRODUCTS);
+      console.log(`📦 Loaded ${data.length} products`);
     } else if(name==='journal' && Array.isArray(data)){
       JOURNAL = data; saveJournal(JOURNAL);
+      console.log(`📝 Loaded ${data.length} journal entries`);
     } else if(name==='targets' && data && typeof data==='object'){
       TARGETS = data; saveTargets(TARGETS);
+      console.log(`🎯 Loaded targets`);
     } else if(name==='restaurants' && Array.isArray(data)){
       RESTAURANTS = data; saveRestaurants(RESTAURANTS);
+      console.log(`🏪 Loaded ${data.length} restaurants`);
     } else if(name==='categories' && Array.isArray(data)){
       CATEGORIES = data; saveCategories(CATEGORIES);
+      console.log(`📂 Loaded ${data.length} categories`);
     } else if(name==='menu_items' && Array.isArray(data)){
       MENU_ITEMS = data; saveMenuItems(MENU_ITEMS);
+      console.log(`🍽️ Loaded ${data.length} menu items`);
     } else if(name==='taxonomy' && data && typeof data==='object'){
       TAXONOMY = data; saveTaxonomy(TAXONOMY);
-    } else { return false; }
+      console.log(`🏷️ Loaded taxonomy`);
+    } else { 
+      console.warn(`⚠️ Invalid data format for ${name}.json`);
+      return false; 
+    }
     return true;
-  }catch{ return false; }
+  }catch(error){ 
+    console.error(`💥 Error loading ${name}.json:`, error);
+    return false; 
+  }
 }
 async function autoLoadFromSameFolder(){
+  console.log('🚀 Starting autoLoadFromSameFolder...');
   const p = await tryLoadJSON('products');
   const j = await tryLoadJSON('journal');
   const t = await tryLoadJSON('targets');
@@ -3590,11 +3611,18 @@ async function autoLoadFromSameFolder(){
   const c = await tryLoadJSON('categories');
   const m = await tryLoadJSON('menu_items');
   const tax = await tryLoadJSON('taxonomy');
+  
+  console.log('📊 Load results:', {products: p, journal: j, targets: t, restaurants: r, categories: c, menu_items: m, taxonomy: tax});
+  
   if(p||j||t||r||c||m||tax){
+    console.log('🔄 Refreshing UI with loaded data...');
     renderProducts(); fillProductDropdown(); fillRestaurantDropdowns(); fillCategoryDropdowns();
     renderJournalForDate(document.getElementById('jr-date').value);
     renderSummary(); fillTargetsForm(); if (typeof compareRefreshAll === 'function') compareRefreshAll();
     updatePopularTags();
+    console.log('✅ UI refreshed successfully');
+  } else {
+    console.warn('⚠️ No data files were loaded successfully');
   }
 }
 
