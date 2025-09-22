@@ -1008,12 +1008,8 @@ document.querySelectorAll('.tab').forEach(btn=>{
 
 // --------- Jurnal ---------
 function fillJournalRestaurantDropdown(){
-  console.log('🔄 Filling journal restaurant dropdown...', RESTAURANTS.length, 'restaurants');
   const container = document.getElementById('jr-restaurant-dropdown');
-  if(!container) {
-    console.warn('⚠️ Journal restaurant dropdown not found: jr-restaurant-dropdown');
-    return;
-  }
+  if(!container) return;
   
   container.innerHTML = '';
   
@@ -1079,7 +1075,6 @@ function fillJournalRestaurantDropdown(){
   });
   
   updateRestaurantButtonText();
-  console.log('✅ Filled journal restaurant dropdown');
 }
 
 function updateMasterCheckbox(){
@@ -1136,14 +1131,10 @@ function hideRestaurantDropdown(){
 }
 
 function fillJournalCategoryDropdown(){
-  console.log('🔄 Filling journal category dropdown...', CATEGORIES.length, 'categories');
-  const sel = document.getElementById('jr-filter-category');
-  if(!sel) {
-    console.warn('⚠️ Journal category dropdown not found: jr-filter-category');
-    return;
-  }
+  const sel = $('#jr-filter-category');
+  if(!sel) return;
   const current = sel.value;
-  sel.innerHTML = '<option value="">📂 Toate categoriile</option>';
+  sel.innerHTML = '<option value="">Toate categoriile</option>';
   CATEGORIES.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.id;
@@ -1151,7 +1142,6 @@ function fillJournalCategoryDropdown(){
     sel.appendChild(opt);
   });
   if(current && CATEGORIES.some(c => c.id === current)) sel.value = current;
-  console.log('✅ Filled journal category dropdown');
 }
 
 function clearJournalFilters(){
@@ -1540,6 +1530,9 @@ function showProductDetailsCard(product) {
   document.getElementById('jr-detail-sat').textContent = formatNutritionValue(product.sat) + ' g';
   document.getElementById('jr-detail-sugar').textContent = formatNutritionValue(product.sug) + ' g';
   document.getElementById('jr-detail-fiber').textContent = formatNutritionValue(product.fib) + ' g';
+  
+  // Update product donut charts
+  updateProductDonutCharts(product);
   
   // Show the container and hide unnecessary fields
   container.style.display = 'block';
@@ -2204,16 +2197,12 @@ function renderProductTags(tags) {
 
 // Fill restaurant dropdowns
 function fillRestaurantDropdowns(){
-  console.log('🔄 Filling restaurant dropdowns...', RESTAURANTS.length, 'restaurants');
   const dropdowns = ['p-restaurant', 'p-filter-restaurant', 'bulk-restaurant'];
   dropdowns.forEach(id => {
     const sel = document.getElementById(id);
-    if(!sel) {
-      console.warn(`⚠️ Restaurant dropdown not found: ${id}`);
-      return;
-    }
+    if(!sel) return;
     const current = sel.value;
-    sel.innerHTML = '<option value="">🏪 Selectează restaurant...</option>';
+    sel.innerHTML = '<option value="">Selectează restaurant...</option>';
     RESTAURANTS.forEach(r => {
       const opt = document.createElement('option');
       opt.value = r.id;
@@ -2221,22 +2210,17 @@ function fillRestaurantDropdowns(){
       sel.appendChild(opt);
     });
     if(current && RESTAURANTS.some(r => r.id === current)) sel.value = current;
-    console.log(`✅ Filled restaurant dropdown: ${id}`);
   });
 }
 
 // Fill category dropdowns
 function fillCategoryDropdowns(){
-  console.log('🔄 Filling category dropdowns...', CATEGORIES.length, 'categories');
   const dropdowns = ['p-category', 'p-filter-category', 'bulk-category'];
   dropdowns.forEach(id => {
     const sel = document.getElementById(id);
-    if(!sel) {
-      console.warn(`⚠️ Category dropdown not found: ${id}`);
-      return;
-    }
+    if(!sel) return;
     const current = sel.value;
-    sel.innerHTML = '<option value="">📂 Selectează categorie...</option>';
+    sel.innerHTML = '<option value="">Selectează categorie...</option>';
     CATEGORIES.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
@@ -2244,7 +2228,6 @@ function fillCategoryDropdowns(){
       sel.appendChild(opt);
     });
     if(current && CATEGORIES.some(c => c.id === current)) sel.value = current;
-    console.log(`✅ Filled category dropdown: ${id}`);
   });
 }
 
@@ -4418,3 +4401,48 @@ async function forceLoadFromJSON(){
 }
 
 })();
+
+// ===== ULTRA COMPACT MOBILE FUNCTIONS =====
+
+function updateProductDonutCharts(product) {
+  const targets = loadTargets();
+  const nutrients = [
+    { key: 'cal', target: targets.cal || 2000, current: product.cal || 0, element: 'jr-product-donut-calories' },
+    { key: 'pro', target: targets.pro || 130, current: product.pro || 0, element: 'jr-product-donut-protein' },
+    { key: 'carb', target: targets.carb || 260, current: product.carb || 0, element: 'jr-product-donut-carbs' },
+    { key: 'fat', target: targets.fat || 70, current: product.fat || 0, element: 'jr-product-donut-fat' },
+    { key: 'sat', target: targets.sat || 20, current: product.sat || 0, element: 'jr-product-donut-sat' },
+    { key: 'sug', target: targets.sug || 50, current: product.sug || 0, element: 'jr-product-donut-sugar' },
+    { key: 'fib', target: targets.fib || 30, current: product.fib || 0, element: 'jr-product-donut-fiber' }
+  ];
+  
+  nutrients.forEach(nutrient => {
+    const donutElement = document.getElementById(nutrient.element);
+    if (!donutElement) return;
+    
+    const percentage = Math.min((nutrient.current / nutrient.target) * 100, 100);
+    const progress = (percentage / 100) * 360;
+    
+    // Set CSS custom properties
+    donutElement.style.setProperty('--progress', `${progress}deg`);
+    
+    // Determine state
+    let state = 'empty';
+    if (nutrient.current > 0) {
+      if (percentage >= 100) {
+        state = 'over';
+      } else if (percentage >= 90) {
+        state = 'hit';
+      } else {
+        state = 'under';
+      }
+    }
+    
+    // Update donut chart
+    donutElement.setAttribute('data-state', state);
+    
+    // Update center text
+    const centerText = Math.round(percentage) + '%';
+    donutElement.innerHTML = `<div class="donut-center">${centerText}</div>`;
+  });
+}

@@ -701,3 +701,146 @@ textarea {
   .metric-value{font-size:10px;}
   .metric-diff{font-size:8px;}
 }
+
+/* ===== ULTRA COMPACT MOBILE DESIGN ===== */
+
+/* Ultra Compact Nutrition List */
+.nutrition-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.nutrition-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+
+.nutrition-line:last-child {
+  border-bottom: none;
+}
+
+.nutrition-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+}
+
+.nutrition-label {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 70px;
+}
+
+.nutrition-value {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 700;
+  text-align: right;
+  min-width: 50px;
+}
+
+/* Product Donut Charts */
+.product-donut {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  background: var(--headerbg);
+  --accent: #22c55e;
+  --over-color: #ef4444;
+  --ring-track: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.product-donut::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--headerbg);
+  z-index: 1;
+}
+
+.product-donut .donut-center {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  font-size: 7px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Product donut chart states */
+.product-donut[data-state="under"] {
+  background: conic-gradient(var(--accent) 0deg var(--progress), var(--ring-track) var(--progress) 360deg);
+}
+
+.product-donut[data-state="over"] {
+  background: conic-gradient(var(--over-color) 0deg var(--progress), var(--ring-track) var(--progress) 360deg);
+}
+
+.product-donut[data-state="hit"] {
+  background: conic-gradient(var(--accent) 0deg 360deg);
+}
+
+.product-donut[data-state="empty"] {
+  background: var(--ring-track);
+}
+
+/* Mobile Ultra Compact - Further optimizations */
+@media (max-width: 480px) {
+  .nutrition-line {
+    padding: 4px 0;
+    gap: 6px;
+  }
+  
+  .nutrition-label {
+    font-size: 10px;
+    min-width: 60px;
+  }
+  
+  .nutrition-value {
+    font-size: 11px;
+    min-width: 45px;
+  }
+  
+  /* Keep donut charts but make them smaller on mobile */
+  .product-donut {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .product-donut::before {
+    inset: 4px;
+  }
+  
+  .product-donut .donut-center {
+    font-size: 6px;
+  }
+  
+  /* Reduce header spacing */
+  .jr-product-details-header h3 {
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .jr-product-details-meta {
+    margin-bottom: 8px;
+  }
+  
+  .jr-detail-item {
+    margin-bottom: 4px;
+  }
+}
