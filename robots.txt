@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://your-username.github.io/FoodApp-GitHub/sitemap.xml
+
+# Disallow debug and test files
+Disallow: /debug-*.html
+Disallow: /test-*.html
+Disallow: /test-*.js
+Disallow: /debug-*.js
+
+# Allow all other content
+Allow: /index.html
+Allow: /style.css
+Allow: /app.js
+Allow: /enhancements.js
+Allow: /*.json

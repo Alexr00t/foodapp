@@ -1569,6 +1569,27 @@ function clearProductSelection() {
   updateSelectedMeta(null);
   updateBaseHint();
   updateUnitDisplay(null);
+  
+  // Clear mobile bar charts contribution overlay
+  const currentDate = document.getElementById('jr-date')?.value;
+  if (currentDate) {
+    const rows = JOURNAL.filter(x => x.date === currentDate);
+    let dailyTotals = { cal: 0, fat: 0, sat: 0, carb: 0, sug: 0, fib: 0, pro: 0 };
+    
+    rows.forEach((r) => {
+      const n = calcNutrients(r) || { cal: 0, fat: 0, sat: 0, carb: 0, sug: 0, fib: 0, pro: 0 };
+      dailyTotals.cal += n.cal;
+      dailyTotals.fat += n.fat;
+      dailyTotals.sat += n.sat;
+      dailyTotals.carb += n.carb;
+      dailyTotals.sug += n.sug;
+      dailyTotals.fib += n.fib;
+      dailyTotals.pro += n.pro;
+    });
+    
+    // Update charts without product contribution
+    updateAllCharts(dailyTotals, null);
+  }
 }
 
 function fillJournalFilters() {
@@ -1783,6 +1804,135 @@ function pieCell(key, val){
   return `<td>${donutHTML(key, val, goal, pRaw)}</td>`;
 }
 
+// ===== MOBILE BAR CHART FUNCTIONS =====
+
+// Debug utilities for chart rendering
+let DEBUG_MOBILE_CHARTS = false; // toggleable; set to false to silence logs
+function dbgChart(label, data){
+  if(!DEBUG_MOBILE_CHARTS) return;
+  try {
+    console.log(label, data);
+  } catch(_){}
+}
+function dbgGroupStart(title){ if(DEBUG_MOBILE_CHARTS) { try { console.groupCollapsed(title); } catch(_){} } }
+function dbgGroupEnd(){ if(DEBUG_MOBILE_CHARTS) { try { console.groupEnd(); } catch(_){} } }
+
+function updateMobileBarChart(key, actual, target, productContribution = 0) {
+  dbgGroupStart(`updateMobileBarChart:${key}`);
+  const barContainer = document.getElementById(`jr-mobile-bar-${key}`);
+  if (!barContainer) {
+    dbgChart('container-missing', { key, selector: `#jr-mobile-bar-${key}` });
+    dbgGroupEnd();
+    return;
+  }
+  
+  const barFill = barContainer.querySelector('.mobile-bar-fill');
+  const barOver = barContainer.querySelector('.mobile-bar-over');
+  const barContribution = barContainer.querySelector('.mobile-bar-contribution');
+  const barValue = document.getElementById(`jr-mobile-value-${key}`);
+  const barPercent = document.getElementById(`jr-mobile-percent-${key}`);
+  const targetLine = barContainer.querySelector('.mobile-bar-target-line');
+  
+  if (!barFill || !barOver || !barContribution || !barValue || !barPercent || !targetLine) {
+    dbgChart('sub-elements-missing', {
+      hasBarFill: !!barFill,
+      hasBarOver: !!barOver,
+      hasBarContribution: !!barContribution,
+      hasBarValue: !!barValue,
+      hasBarPercent: !!barPercent,
+      hasTargetLine: !!targetLine
+    });
+    dbgGroupEnd();
+    return;
+  }
+  
+  const ratio = target > 0 ? actual / target : 0;
+  const contributionRatio = target > 0 ? (productContribution || 0) / target : 0;
+  const percentage = Math.round(ratio * 100);
+  
+  dbgChart('inputs', { key, actual, target, productContribution, ratio, contributionRatio });
+  
+  // Update values
+  barValue.textContent = Math.round(actual);
+  barPercent.textContent = `${percentage}%`;
+  
+  // Calculate bar width (0-200%) so 100% is mid-bar
+  const barWidth = Math.min(ratio * 200, 200);
+  barFill.style.width = `${barWidth}%`;
+  // Over-segment starts at 100% (50% width) and grows for amount exceeding 100%
+  const overWidth = Math.max(barWidth - 100, 0);
+  barOver.style.width = `${overWidth}%`;
+  
+  // Position target line at 50% (represents 100% of target)
+  targetLine.style.left = '50%';
+  
+  // Update product contribution overlay placed after current daily amount
+  const contributionWidth = Math.min(contributionRatio * 200, 200);
+  const contributionStart = Math.min(barWidth, 200);
+  const contributionEnd = Math.min(contributionStart + contributionWidth, 200);
+  barContribution.style.left = `${contributionStart}%`;
+  barContribution.style.width = `${contributionEnd - contributionStart}%`;
+  
+  // Determine main bar state
+  let state = 'empty';
+  if (actual > 0) {
+    state = ratio >= 1 ? 'over' : 'under';
+  }
+  barFill.setAttribute('data-state', state);
+  
+  // Contribution state color
+  let contributionState = 'empty';
+  if (productContribution > 0) {
+    contributionState = (ratio + contributionRatio) >= 1 ? 'over' : 'under';
+  }
+  barContribution.setAttribute('data-state', contributionState);
+  
+  dbgChart('computed', { barWidth, contributionStart, contributionEnd, state, contributionState });
+  dbgGroupEnd();
+}
+
+function updateDesktopDonutChart(key, actual, target) {
+  const donutContainer = document.getElementById(`jr-desktop-donut-${key}`);
+  if (!donutContainer) return;
+  
+  const ratio = target > 0 ? actual / target : 0;
+  donutContainer.innerHTML = donutHTML(key, actual, target, ratio);
+}
+
+function updateAllCharts(totals, productContribution = null) {
+  // console.log('Updating all charts with totals:', totals, 'productContribution:', productContribution);
+  
+  const nutrients = [
+    { key: 'cal', target: TARGETS.cal || 0 },
+    { key: 'pro', target: TARGETS.pro || 0 },
+    { key: 'carb', target: TARGETS.carb || 0 },
+    { key: 'fat', target: TARGETS.fat || 0 },
+    { key: 'sug', target: TARGETS.sug || 0 },
+    { key: 'fib', target: TARGETS.fib || 0 }
+  ];
+  
+  nutrients.forEach(nutrient => {
+    const actual = totals[nutrient.key] || 0;
+    const contribution = productContribution ? (productContribution[nutrient.key] || 0) : 0;
+    
+    // console.log(`Updating charts for ${nutrient.key}:`, {
+    //   actual,
+    //   target: nutrient.target,
+    //   contribution
+    // });
+    
+    // Update mobile bar charts (only on mobile)
+    if (window.innerWidth <= 768) {
+      updateMobileBarChart(nutrient.key, actual, nutrient.target, contribution);
+    }
+    
+    // Update desktop donut charts (only on desktop)
+    if (window.innerWidth >= 1024) {
+      updateDesktopDonutChart(nutrient.key, actual, nutrient.target);
+    }
+  });
+}
+
 function renderJournalForDate(dateISO){
   $('#jr-date').value = dateISO;
   document.getElementById('jr-title').textContent = 'Intrari pentru ' + formatDateUS(dateISO);
@@ -1809,7 +1959,10 @@ function renderJournalForDate(dateISO){
   const tbody = $('#jr-tbody');
   const tbodyTot = $('#jr-totals');
   const tbodyPies = $('#jr-pies');
-  tbody.innerHTML=''; tbodyTot.innerHTML=''; tbodyPies.innerHTML='';
+  // Preserve pies row structure (mobile bars) and only clear dynamic rows
+  tbody.innerHTML='';
+  tbodyTot.innerHTML='';
+  // Do not clear tbodyPies here so that mobile bar containers remain available
 
   const rows = JOURNAL.filter(x=>x.date===dateISO);
   let t={cal:0,fat:0,sat:0,carb:0,sug:0,fib:0,pro:0};
@@ -1849,20 +2002,8 @@ function renderJournalForDate(dateISO){
                      <td class="sticky"></td>`;
   tbodyTot.appendChild(trTot);
 
-  const trPie=document.createElement('tr');
-  trPie.innerHTML = `
-    <td></td>
-    <td></td>
-    <td></td>
-    ${pieCell('cal', t.cal)}
-    ${pieCell('fat', t.fat)}
-    ${pieCell('sat', t.sat)}
-    ${pieCell('carb', t.carb)}
-    ${pieCell('sug', t.sug)}
-    ${pieCell('fib', t.fib)}
-    ${pieCell('pro', t.pro)}
-    <td></td>`;
-  tbodyPies.appendChild(trPie);
+  // Update all charts (both mobile and desktop)
+  updateAllCharts(t);
 
   rows.slice()
       .sort((a,b)=> (b.ts||0) - (a.ts||0) || (b.id||'').localeCompare(a.id||''))
@@ -4137,6 +4278,10 @@ function addProductToJournal(productName){
   document.getElementById('chart-weekly')?.addEventListener('click', () => switchChartType('weekly'));
   document.getElementById('chart-monthly')?.addEventListener('click', () => switchChartType('monthly'));
   
+  // Add event listener for quantity input to update mobile bar charts in real-time
+  document.getElementById('jr-qty')?.addEventListener('input', updateMobileBarChartsWithQuantity);
+  document.getElementById('jr-unit')?.addEventListener('change', updateMobileBarChartsWithQuantity);
+  
   // Show current folder information
   showCurrentFolderInfo();
   whenChartReady(initCompare);
@@ -4445,4 +4590,213 @@ function updateProductDonutCharts(product) {
     const centerText = Math.round(percentage) + '%';
     donutElement.innerHTML = `<div class="donut-center">${centerText}</div>`;
   });
+  
+  // Update mobile bar charts for product details
+  updateProductMobileBarCharts(product);
+}
+
+function updateProductMobileBarCharts(product) {
+  dbgGroupStart('updateProductMobileBarCharts');
+  dbgChart('product-input', product);
+  
+  const targets = loadTargets();
+  dbgChart('targets', targets);
+  
+  // Get current daily totals
+  const currentDate = document.getElementById('jr-date')?.value;
+  let dailyTotals = { cal: 0, fat: 0, sat: 0, carb: 0, sug: 0, fib: 0, pro: 0 };
+  dbgChart('currentDate', currentDate);
+  
+  if (currentDate) {
+    const rows = JOURNAL.filter(x => x.date === currentDate);
+    dbgChart('journal-rows-count', rows.length);
+    rows.forEach((r) => {
+      const n = calcNutrients(r) || { cal: 0, fat: 0, sat: 0, carb: 0, sug: 0, fib: 0, pro: 0 };
+      dailyTotals.cal += n.cal;
+      dailyTotals.fat += n.fat;
+      dailyTotals.sat += n.sat;
+      dailyTotals.carb += n.carb;
+      dailyTotals.sug += n.sug;
+      dailyTotals.fib += n.fib;
+      dailyTotals.pro += n.pro;
+    });
+  }
+  dbgChart('dailyTotals', dailyTotals);
+  
+  const nutrients = [
+    { key: 'cal', target: targets.cal || 2000, current: product.cal || 0, daily: dailyTotals.cal },
+    { key: 'pro', target: targets.pro || 130, current: product.pro || 0, daily: dailyTotals.pro },
+    { key: 'carb', target: targets.carb || 260, current: product.carb || 0, daily: dailyTotals.carb },
+    { key: 'fat', target: targets.fat || 70, current: product.fat || 0, daily: dailyTotals.fat },
+    { key: 'sug', target: targets.sug || 50, current: product.sug || 0, daily: dailyTotals.sug },
+    { key: 'fib', target: targets.fib || 30, current: product.fib || 0, daily: dailyTotals.fib }
+  ];
+  
+  nutrients.forEach(nutrient => {
+    dbgGroupStart(`product-nutrient-${nutrient.key}`);
+    
+    const barContainer = document.getElementById(`jr-product-mobile-bar-${nutrient.key}`);
+    if (!barContainer) {
+      dbgChart('container-missing', `#jr-product-mobile-bar-${nutrient.key}`);
+      dbgGroupEnd();
+      return;
+    }
+    
+    const barFill = barContainer.querySelector('.mobile-bar-fill');
+    const barOver = barContainer.querySelector('.mobile-bar-over');
+    const barContribution = barContainer.querySelector('.mobile-bar-contribution');
+    const barValue = document.getElementById(`jr-product-mobile-value-${nutrient.key}`);
+    const barPercent = document.getElementById(`jr-product-mobile-percent-${nutrient.key}`);
+    const barDailyPercent = document.getElementById(`jr-product-mobile-daily-percent-${nutrient.key}`);
+    const targetLine = barContainer.querySelector('.mobile-bar-target-line');
+    
+    if (!barFill || !barOver || !barValue || !barPercent || !barDailyPercent) {
+      dbgChart('elements-missing', {
+        hasBarFill: !!barFill,
+        hasBarOver: !!barOver,
+        hasBarContribution: !!barContribution,
+        hasBarValue: !!barValue,
+        hasBarPercent: !!barPercent,
+        hasBarDailyPercent: !!barDailyPercent,
+        hasTargetLine: !!targetLine
+      });
+      dbgGroupEnd();
+      return;
+    }
+    
+    // Calculate ratios
+    const dailyRatio = nutrient.target > 0 ? nutrient.daily / nutrient.target : 0;
+    const productRatio = nutrient.target > 0 ? nutrient.current / nutrient.target : 0;
+    const totalRatio = dailyRatio + productRatio;
+    
+    dbgChart('ratios', {
+      nutrient: nutrient.key,
+      daily: nutrient.daily,
+      current: nutrient.current,
+      target: nutrient.target,
+      dailyRatio,
+      productRatio,
+      totalRatio
+    });
+    
+    // Update values - show product contribution and total percentage (daily + product)
+    barValue.textContent = Math.round(nutrient.current);
+    barPercent.textContent = `(${Math.round(productRatio * 100)}%)`;
+    barDailyPercent.textContent = `${Math.round(totalRatio * 100)}%`; // Show total percentage
+    
+    // Apply red color if total percentage > 100%
+    if (totalRatio > 1.0) {
+      barDailyPercent.classList.add('over-target');
+    } else {
+      barDailyPercent.classList.remove('over-target');
+    }
+    
+    // Position target line at 50% (represents 100% of target)
+    targetLine.style.left = '50%';
+    
+    // Calculate bar widths (0-200% scaling, 100% = 50% width)
+    const dailyWidth = Math.min(dailyRatio * 50, 100); // Max 200% = 100% of bar width
+    const contributionWidth = Math.min(productRatio * 50, 100); // Max 200% = 100% of bar width
+    
+    // Daily consumption: green up to 100%, red for over-target
+    // Account for 4px target line width (2px on each side of center)
+    const targetLineWidth = 2; // Half of 4px target line
+    const greenWidth = Math.min(dailyWidth, 50 - targetLineWidth); // Green up to target line center
+    const redWidth = Math.max(dailyWidth - (50 + targetLineWidth), 0); // Red after target line center
+    
+    // Set green segment (up to target line center)
+    barFill.style.width = `${greenWidth}%`;
+    
+    // Red segment: only show if there's over-target consumption
+    if (redWidth > 0) {
+      barOver.style.display = 'block';
+      barOver.style.left = `${50 + targetLineWidth}%`; // Start after target line center
+      barOver.style.width = `${redWidth}%`;
+    } else {
+      barOver.style.display = 'none';
+    }
+    
+    // Green segment: always "under" (green color)
+    barFill.setAttribute('data-state', 'under');
+    
+    // Update product contribution overlay - positioned after daily consumption
+    // If daily consumption is at max (200%), align contribution to the right
+    const maxDailyWidth = 100; // 200% of target = 100% of bar width
+    const contributionStart = Math.min(dailyWidth, maxDailyWidth);
+    const contributionEnd = Math.min(contributionStart + contributionWidth, maxDailyWidth);
+    
+    // If daily is at max and contribution would exceed, align to right
+    if (dailyWidth >= maxDailyWidth && contributionWidth > 0) {
+      const availableWidth = contributionWidth;
+      barContribution.style.left = `${maxDailyWidth - availableWidth}%`;
+      barContribution.style.width = `${availableWidth}%`;
+    } else {
+      barContribution.style.left = `${contributionStart}%`;
+      barContribution.style.width = `${contributionEnd - contributionStart}%`;
+    }
+    
+    // Determine contribution state based on where the contribution falls
+    let contributionState = 'empty';
+    if (nutrient.current > 0) {
+      // Check if contribution starts in the red zone (after 100% of target)
+      const contributionStartRatio = dailyRatio; // Where contribution starts
+      contributionState = contributionStartRatio >= 1 ? 'over' : 'under';
+    }
+    barContribution.setAttribute('data-state', contributionState);
+    
+    
+    dbgChart('computed-widths', {
+      nutrient: nutrient.key,
+      dailyWidth,
+      greenWidth,
+      redWidth,
+      contributionStart,
+      contributionEnd,
+      contributionWidth: contributionEnd - contributionStart,
+      contributionState
+    });
+    
+    dbgGroupEnd();
+  });
+  
+  dbgGroupEnd(); // End updateProductMobileBarCharts
+}
+
+// Update mobile bar charts with current quantity input
+function updateMobileBarChartsWithQuantity() {
+  if (!currentSelectedProduct) return;
+  
+  const product = getAllProducts().find(p => p.name === currentSelectedProduct);
+  if (!product) return;
+  
+  const quantityInput = document.getElementById('jr-qty');
+  const unitSelect = document.getElementById('jr-unit');
+  if (!quantityInput || !unitSelect) return;
+  
+  const quantity = parseFloat(quantityInput.value) || 0;
+  const unit = unitSelect.value;
+  
+  // Create a temporary entry to calculate nutrients with the current quantity
+  const tempEntry = {
+    product: product.name,
+    qty: quantity,
+    unit: unit
+  };
+  
+  const nutrients = calcNutrients(tempEntry);
+  if (!nutrients) return;
+  
+  // Create a modified product object with scaled values
+  const scaledProduct = {
+    ...product,
+    cal: nutrients.cal,
+    pro: nutrients.pro,
+    carb: nutrients.carb,
+    fat: nutrients.fat,
+    sug: nutrients.sug,
+    fib: nutrients.fib
+  };
+  
+  // Update mobile bar charts with scaled product
+  updateProductMobileBarCharts(scaledProduct);
 }
