@@ -4280,6 +4280,7 @@ function addProductToJournal(productName){
   
   // Add event listener for quantity input to update mobile bar charts in real-time
   document.getElementById('jr-qty')?.addEventListener('input', updateMobileBarChartsWithQuantity);
+  document.getElementById('jr-qty-slider')?.addEventListener('input', updateMobileBarChartsWithSlider);
   document.getElementById('jr-unit')?.addEventListener('change', updateMobileBarChartsWithQuantity);
   
   // Show current folder information
@@ -4775,6 +4776,54 @@ function updateMobileBarChartsWithQuantity() {
   
   const quantity = parseFloat(quantityInput.value) || 0;
   const unit = unitSelect.value;
+  
+  // Create a temporary entry to calculate nutrients with the current quantity
+  const tempEntry = {
+    product: product.name,
+    qty: quantity,
+    unit: unit
+  };
+  
+  const nutrients = calcNutrients(tempEntry);
+  if (!nutrients) return;
+  
+  // Create a modified product object with scaled values
+  const scaledProduct = {
+    ...product,
+    cal: nutrients.cal,
+    pro: nutrients.pro,
+    carb: nutrients.carb,
+    fat: nutrients.fat,
+    sug: nutrients.sug,
+    fib: nutrients.fib
+  };
+  
+  // Update mobile bar charts with scaled product
+  updateProductMobileBarCharts(scaledProduct);
+}
+
+function updateMobileBarChartsWithSlider() {
+  if (!currentSelectedProduct) return;
+  
+  const product = getAllProducts().find(p => p.name === currentSelectedProduct);
+  if (!product) return;
+  
+  const slider = document.getElementById('jr-qty-slider');
+  const display = document.getElementById('jr-qty-display');
+  const unitSelect = document.getElementById('jr-unit');
+  if (!slider || !display || !unitSelect) return;
+  
+  const quantity = parseFloat(slider.value) || 0;
+  const unit = unitSelect.value;
+  
+  // Update display
+  display.textContent = quantity;
+  
+  // Update hidden input for compatibility
+  const hiddenInput = document.getElementById('jr-qty');
+  if (hiddenInput) {
+    hiddenInput.value = quantity;
+  }
   
   // Create a temporary entry to calculate nutrients with the current quantity
   const tempEntry = {
