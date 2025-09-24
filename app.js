@@ -1474,7 +1474,10 @@ function selectProduct(productName){
     searchInput.dataset.selected = 'true';
   }
   hideProductDropdown();
-  document.getElementById('jr-qty')?.focus();
+  // Don't auto-focus input on mobile to avoid keyboard issues
+  if (window.innerWidth > 768) {
+    document.getElementById('jr-qty')?.focus();
+  }
 }
 
 function showProductDetailsCard(product) {
@@ -4376,6 +4379,22 @@ function configureQuantitySliderForUnit(unit) {
     }
   });
   
+  // Make input editable when touched on mobile
+  document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        // Make editable
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
+        // Small delay to ensure focus works
+        setTimeout(() => {
+          input.focus();
+        }, 50);
+      }
+    }
+  }, { passive: true });
+  
   // Handle orientation change
   window.addEventListener('resize', function() {
     const input = document.getElementById('jr-qty');
@@ -4880,11 +4899,7 @@ function updateProductMobileBarCharts(product) {
       if (!isEditing) {
         input.classList.remove('editable');
         input.setAttribute('readonly', 'true');
-        // Keep slider ready for interaction
-        setTimeout(() => {
-          slider.focus();
-          input.blur();
-        }, 0);
+        // Don't force focus on slider to avoid interfering with user interaction
       }
     }
   }
@@ -4908,13 +4923,7 @@ function updateMobileBarChartsWithQuantity() {
   const slider = document.getElementById('jr-qty-slider');
   if (slider) {
     slider.value = quantity;
-    // On mobile, focus slider only if input is not being edited
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input && document.activeElement !== input) {
-        slider.focus();
-      }
-    }
+    // Don't focus slider on mobile to avoid interfering with input
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
@@ -4955,15 +4964,14 @@ function updateMobileBarChartsWithSlider() {
   const quantity = parseFloat(slider.value) || 0;
   const unit = unitSelect.value;
   
-  // Sync with input field (but don't make it editable on mobile)
+  // Sync with input field
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // On mobile, exit edit mode when slider is used
-    if (window.innerWidth <= 768) {
+    // On mobile, only exit edit mode if input is not currently focused
+    if (window.innerWidth <= 768 && document.activeElement !== input) {
       input.classList.remove('editable');
       input.setAttribute('readonly', 'true');
-      input.blur();
     }
   }
   
