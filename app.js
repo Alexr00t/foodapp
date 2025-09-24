@@ -4339,7 +4339,12 @@ function configureQuantitySliderForUnit(unit) {
     const input = document.getElementById('jr-qty');
     if (slider && input) {
       input.value = slider.value;
-      // Don't interfere with input focus - let user choose how to interact
+      // On mobile, make input readonly when slider is used (to hide keyboard)
+      if (window.innerWidth <= 768) {
+        input.classList.remove('editable');
+        input.setAttribute('readonly', 'true');
+        input.blur();
+      }
     }
   });
 
@@ -4351,12 +4356,43 @@ function configureQuantitySliderForUnit(unit) {
     if (initialUnit) configureQuantitySliderForUnit(initialUnit);
   } catch(_){}
   
-  // Remove any readonly restrictions - let input work normally on all devices
-  const input = document.getElementById('jr-qty');
-  if (input) {
-    input.removeAttribute('readonly');
-    input.classList.add('editable');
+  // Mobile: make input readonly by default
+  if (window.innerWidth <= 768) {
+    const input = document.getElementById('jr-qty');
+    if (input) {
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+    }
   }
+  
+  // Make input editable when clicked on mobile
+  document.getElementById('jr-qty')?.addEventListener('click', function(event) {
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        // Make editable
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
+        input.focus();
+      }
+    }
+  });
+  
+  // Make input editable when touched on mobile
+  document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        // Make editable
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
+        // Small delay to ensure focus works
+        setTimeout(() => {
+          input.focus();
+        }, 50);
+      }
+    }
+  }, { passive: true });
   
   // Show current folder information
   showCurrentFolderInfo();
@@ -4837,7 +4873,15 @@ function updateProductMobileBarCharts(product) {
   
   dbgGroupEnd(); // End updateProductMobileBarCharts
   
-  // Don't interfere with input state - let user control interaction
+  // On mobile, make input readonly when product is selected (to hide keyboard)
+  if (window.innerWidth <= 768) {
+    const input = document.getElementById('jr-qty');
+    if (input) {
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+      input.blur();
+    }
+  }
 }
 
 // Update mobile bar charts with current quantity input
@@ -4903,7 +4947,12 @@ function updateMobileBarChartsWithSlider() {
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // Don't interfere with input state - let user control it
+    // On mobile, make input readonly when slider is used (to hide keyboard)
+    if (window.innerWidth <= 768) {
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+      input.blur();
+    }
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
