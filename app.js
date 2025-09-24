@@ -4287,28 +4287,51 @@ function addProductToJournal(productName){
   document.getElementById('jr-qty')?.addEventListener('input', syncSliderWithInput);
   document.getElementById('jr-qty-slider')?.addEventListener('input', syncInputWithSlider);
   
-  // Prevent keyboard activation on mobile when using slider
-  document.getElementById('jr-qty-slider')?.addEventListener('touchstart', function(event) {
-    // Prevent input focus on mobile to avoid keyboard
+  // Mobile: make input readonly by default, editable only when touched
+  if (window.innerWidth <= 768) {
+    const input = document.getElementById('jr-qty');
+    if (input) {
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+    }
+  }
+  
+  // Make input editable when directly touched on mobile
+  document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
-        input.blur();
-        input.setAttribute('readonly', 'true');
-        // Remove readonly after a short delay
-        setTimeout(() => {
-          input.removeAttribute('readonly');
-        }, 100);
+        input.classList.add('editable');
+        input.removeAttribute('readonly');
+        input.focus();
       }
     }
   });
   
-  document.getElementById('jr-qty-slider')?.addEventListener('mousedown', function(event) {
-    // Prevent input focus on mobile to avoid keyboard
+  // Make input editable when clicked on mobile
+  document.getElementById('jr-qty')?.addEventListener('click', function(event) {
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
-        input.blur();
+        input.classList.add('editable');
+        input.removeAttribute('readonly');
+        input.focus();
+      }
+    }
+  });
+  
+  // Handle orientation change
+  window.addEventListener('resize', function() {
+    const input = document.getElementById('jr-qty');
+    if (input) {
+      if (window.innerWidth <= 768) {
+        // Mobile: make readonly by default
+        input.classList.remove('editable');
+        input.setAttribute('readonly', 'true');
+      } else {
+        // Desktop: always editable
+        input.classList.add('editable');
+        input.removeAttribute('readonly');
       }
     }
   });
@@ -4791,6 +4814,19 @@ function updateProductMobileBarCharts(product) {
   });
   
   dbgGroupEnd(); // End updateProductMobileBarCharts
+  
+  // On mobile, focus slider and make input readonly
+  if (window.innerWidth <= 768) {
+    const slider = document.getElementById('jr-qty-slider');
+    const input = document.getElementById('jr-qty');
+    if (slider && input) {
+      // Focus slider for easy interaction
+      slider.focus();
+      // Keep input readonly on mobile
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+    }
+  }
 }
 
 // Update mobile bar charts with current quantity input
@@ -4851,12 +4887,16 @@ function updateMobileBarChartsWithSlider() {
   const quantity = parseFloat(slider.value) || 0;
   const unit = unitSelect.value;
   
-  // Sync with input field (but don't focus it to avoid keyboard)
+  // Sync with input field (but don't make it editable on mobile)
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // Remove focus to prevent keyboard activation
-    input.blur();
+    // On mobile, keep input readonly and remove focus
+    if (window.innerWidth <= 768) {
+      input.blur();
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+    }
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity

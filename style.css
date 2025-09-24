@@ -634,6 +634,21 @@ textarea {
   opacity: 0.7;
 }
 
+/* Mobile: make input readonly by default */
+@media (max-width: 768px) {
+  .quantity-input {
+    pointer-events: none;
+    opacity: 0.7;
+    background: var(--headerbg);
+  }
+  
+  .quantity-input.editable {
+    pointer-events: auto;
+    opacity: 1;
+    background: var(--bg);
+  }
+}
+
 .quantity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
