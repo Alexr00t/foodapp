@@ -629,6 +629,11 @@ textarea {
   font-size: 14px;
 }
 
+.quantity-input[readonly] {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
 .quantity-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -1197,6 +1202,11 @@ textarea {
   
   .quantity-input {
     max-width: 90px;
+    font-size: 16px;
+  }
+  
+  /* Prevent zoom on iOS when focusing input */
+  .quantity-input:focus {
     font-size: 16px;
   }
 }

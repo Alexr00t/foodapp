@@ -4283,9 +4283,35 @@ function addProductToJournal(productName){
   document.getElementById('jr-qty-slider')?.addEventListener('input', updateMobileBarChartsWithSlider);
   document.getElementById('jr-unit')?.addEventListener('change', updateMobileBarChartsWithQuantity);
   
-  // Sync slider with input
+  // Sync slider with input (but prevent keyboard on mobile)
   document.getElementById('jr-qty')?.addEventListener('input', syncSliderWithInput);
   document.getElementById('jr-qty-slider')?.addEventListener('input', syncInputWithSlider);
+  
+  // Prevent keyboard activation on mobile when using slider
+  document.getElementById('jr-qty-slider')?.addEventListener('touchstart', function(event) {
+    // Prevent input focus on mobile to avoid keyboard
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        input.blur();
+        input.setAttribute('readonly', 'true');
+        // Remove readonly after a short delay
+        setTimeout(() => {
+          input.removeAttribute('readonly');
+        }, 100);
+      }
+    }
+  });
+  
+  document.getElementById('jr-qty-slider')?.addEventListener('mousedown', function(event) {
+    // Prevent input focus on mobile to avoid keyboard
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        input.blur();
+      }
+    }
+  });
   
   // Show current folder information
   showCurrentFolderInfo();
@@ -4825,10 +4851,12 @@ function updateMobileBarChartsWithSlider() {
   const quantity = parseFloat(slider.value) || 0;
   const unit = unitSelect.value;
   
-  // Sync with input field
+  // Sync with input field (but don't focus it to avoid keyboard)
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
+    // Remove focus to prevent keyboard activation
+    input.blur();
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
