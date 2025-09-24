@@ -4339,13 +4339,7 @@ function configureQuantitySliderForUnit(unit) {
     const input = document.getElementById('jr-qty');
     if (slider && input) {
       input.value = slider.value;
-      // On mobile, exit edit mode when slider is used
-      if (window.innerWidth <= 768) {
-        input.classList.remove('editable');
-        input.setAttribute('readonly', 'true');
-        input.blur();
-        slider.focus();
-      }
+      // Don't interfere with input focus - let user choose how to interact
     }
   });
 
@@ -4357,59 +4351,12 @@ function configureQuantitySliderForUnit(unit) {
     if (initialUnit) configureQuantitySliderForUnit(initialUnit);
   } catch(_){}
   
-  // Mobile: make input readonly by default
-  if (window.innerWidth <= 768) {
-    const input = document.getElementById('jr-qty');
-    if (input) {
-      input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
-    }
+  // Remove any readonly restrictions - let input work normally on all devices
+  const input = document.getElementById('jr-qty');
+  if (input) {
+    input.removeAttribute('readonly');
+    input.classList.add('editable');
   }
-  
-  // Make input editable when clicked/touched on mobile
-  document.getElementById('jr-qty')?.addEventListener('click', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        // Make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        input.focus();
-      }
-    }
-  });
-  
-  // Make input editable when touched on mobile
-  document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        // Make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        // Small delay to ensure focus works
-        setTimeout(() => {
-          input.focus();
-        }, 50);
-      }
-    }
-  }, { passive: true });
-  
-  // Handle orientation change
-  window.addEventListener('resize', function() {
-    const input = document.getElementById('jr-qty');
-    if (input) {
-      if (window.innerWidth <= 768) {
-        // Mobile: make readonly by default
-        input.classList.remove('editable');
-        input.setAttribute('readonly', 'true');
-      } else {
-        // Desktop: always editable
-        input.classList.add('editable');
-        input.removeAttribute('readonly');
-      }
-    }
-  });
   
   // Show current folder information
   showCurrentFolderInfo();
@@ -4890,19 +4837,7 @@ function updateProductMobileBarCharts(product) {
   
   dbgGroupEnd(); // End updateProductMobileBarCharts
   
-  // On mobile, only enforce readonly if not currently editing
-  if (window.innerWidth <= 768) {
-    const slider = document.getElementById('jr-qty-slider');
-    const input = document.getElementById('jr-qty');
-    if (slider && input) {
-      const isEditing = document.activeElement === input || input.classList.contains('editable');
-      if (!isEditing) {
-        input.classList.remove('editable');
-        input.setAttribute('readonly', 'true');
-        // Don't force focus on slider to avoid interfering with user interaction
-      }
-    }
-  }
+  // Don't interfere with input state - let user control interaction
 }
 
 // Update mobile bar charts with current quantity input
@@ -4968,11 +4903,7 @@ function updateMobileBarChartsWithSlider() {
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // On mobile, only exit edit mode if input is not currently focused
-    if (window.innerWidth <= 768 && document.activeElement !== input) {
-      input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
-    }
+    // Don't interfere with input state - let user control it
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
