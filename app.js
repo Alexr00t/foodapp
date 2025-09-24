@@ -4293,6 +4293,13 @@ function addProductToJournal(productName){
     if (input) {
       input.classList.remove('editable');
       input.setAttribute('readonly', 'true');
+      // Prevent focus on mobile
+      input.addEventListener('focus', function(e) {
+        if (window.innerWidth <= 768) {
+          e.preventDefault();
+          input.blur();
+        }
+      });
     }
   }
   
@@ -4328,6 +4335,13 @@ function addProductToJournal(productName){
         // Mobile: make readonly by default
         input.classList.remove('editable');
         input.setAttribute('readonly', 'true');
+        // Prevent focus on mobile
+        input.addEventListener('focus', function(e) {
+          if (window.innerWidth <= 768) {
+            e.preventDefault();
+            input.blur();
+          }
+        });
       } else {
         // Desktop: always editable
         input.classList.add('editable');
@@ -4820,11 +4834,14 @@ function updateProductMobileBarCharts(product) {
     const slider = document.getElementById('jr-qty-slider');
     const input = document.getElementById('jr-qty');
     if (slider && input) {
-      // Focus slider for easy interaction
-      slider.focus();
       // Keep input readonly on mobile
       input.classList.remove('editable');
       input.setAttribute('readonly', 'true');
+      // Focus slider for easy interaction (with delay to ensure it works)
+      setTimeout(() => {
+        slider.focus();
+        input.blur();
+      }, 100);
     }
   }
 }
@@ -4847,6 +4864,10 @@ function updateMobileBarChartsWithQuantity() {
   const slider = document.getElementById('jr-qty-slider');
   if (slider) {
     slider.value = quantity;
+    // On mobile, focus slider instead of input
+    if (window.innerWidth <= 768) {
+      slider.focus();
+    }
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
