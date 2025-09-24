@@ -60,41 +60,41 @@ h1{font-size:24px;margin:0 0 6px}
   
   /* Reduce padding on mobile for more space */
   .wrap {
-    padding: 0 8px;
-    margin: 12px auto;
+    padding: 0 4px;
+    margin: 8px auto;
     overflow-x: hidden;
   }
   
   .card {
-    padding: 12px;
+    padding: 8px;
     overflow-x: hidden;
   }
   
   .journal-controls {
-    gap: 8px;
+    gap: 6px;
     overflow-x: hidden;
   }
   
   .jr-product-selection-container {
-    padding: 12px;
-    margin: 8px 0;
+    padding: 8px;
+    margin: 6px 0;
     overflow-x: hidden;
   }
   
   .jr-product-details-card {
-    padding: 12px;
+    padding: 8px;
     overflow-x: hidden;
   }
   
   .jr-quantity-section {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 8px;
+    padding-top: 8px;
     overflow-x: hidden;
   }
   
   .quantity-slider-section {
-    margin-bottom: 12px;
-    padding: 8px 0;
+    margin-bottom: 8px;
+    padding: 6px 0;
     overflow-x: hidden;
   }
   
@@ -886,10 +886,10 @@ textarea {
 @media(max-width:720px){
   .dash-head{flex-direction:column;align-items:flex-start;}
   .quick-body{grid-template-columns:1fr;}
-  .journal-controls{gap:8px;}
+  .journal-controls{gap:6px;}
   .jc-row{flex-direction:column;align-items:stretch;}
   .jc-row .jc-group{width:100%;}
-  .jc-row-meta{flex-direction:row;gap:6px;}
+  .jc-row-meta{flex-direction:row;gap:4px;}
   .jc-row-meta .jc-group{width:auto;flex:0 0 auto;}
   .jc-row-meta .jc-qty{flex:0 0 70px;}
   .jc-row-meta .jc-unit{flex:0 0 70px;}
@@ -971,7 +971,20 @@ textarea {
   .jc-row-product .jc-search-box input {
     width: 100%;
     margin: 0;
-    padding: 8px 12px;
+    padding: 6px 8px;
+  }
+  
+  /* Reduce padding for all inputs and buttons on mobile */
+  input, select, button {
+    padding: 6px 8px;
+  }
+  
+  .jc-group input, .jc-group select {
+    padding: 6px 8px;
+  }
+  
+  .quantity-input {
+    padding: 6px 8px;
   }
 }
 
