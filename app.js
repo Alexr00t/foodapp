@@ -4284,8 +4284,21 @@ function addProductToJournal(productName){
   document.getElementById('jr-unit')?.addEventListener('change', updateMobileBarChartsWithQuantity);
   
   // Sync slider with input (but prevent keyboard on mobile)
-  document.getElementById('jr-qty')?.addEventListener('input', syncSliderWithInput);
-  document.getElementById('jr-qty-slider')?.addEventListener('input', syncInputWithSlider);
+  document.getElementById('jr-qty')?.addEventListener('input', function() {
+    const input = document.getElementById('jr-qty');
+    const slider = document.getElementById('jr-qty-slider');
+    if (input && slider) {
+      slider.value = input.value;
+    }
+  });
+  
+  document.getElementById('jr-qty-slider')?.addEventListener('input', function() {
+    const slider = document.getElementById('jr-qty-slider');
+    const input = document.getElementById('jr-qty');
+    if (slider && input) {
+      input.value = slider.value;
+    }
+  });
   
   // Mobile: make input readonly by default, editable only when touched
   if (window.innerWidth <= 768) {
@@ -4305,31 +4318,37 @@ function addProductToJournal(productName){
   
   // Make input editable when directly touched on mobile
   document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
+    console.log('Input touchstart, window width:', window.innerWidth);
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
+        console.log('Making input editable via touchstart');
         // Remove readonly and make editable
         input.removeAttribute('readonly');
         input.classList.add('editable');
         // Allow focus after a short delay
         setTimeout(() => {
           input.focus();
+          console.log('Input focused via touchstart');
         }, 50);
       }
     }
-  });
+  }, { passive: true });
   
   // Make input editable when clicked on mobile
   document.getElementById('jr-qty')?.addEventListener('click', function(event) {
+    console.log('Input clicked, window width:', window.innerWidth);
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
+        console.log('Making input editable');
         // Remove readonly and make editable
         input.removeAttribute('readonly');
         input.classList.add('editable');
         // Allow focus after a short delay
         setTimeout(() => {
           input.focus();
+          console.log('Input focused');
         }, 50);
       }
     }
@@ -4359,6 +4378,7 @@ function addProductToJournal(productName){
         // Make sure it's editable when focused
         input.removeAttribute('readonly');
         input.classList.add('editable');
+        console.log('Input made editable on focus');
       }
     }
   });
