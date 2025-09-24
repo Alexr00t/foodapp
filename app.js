@@ -1331,8 +1331,8 @@ function fillProductDropdown(){
   const limitedProducts = filteredProducts.slice(0, MAX_RESULTS);
   filteredProducts = limitedProducts;
   
-
-  if(limitedProducts.length > 0) {
+  // Only show dropdown if user is actively searching (has search term)
+  if(searchTerm && limitedProducts.length > 0) {
     showProductDropdown(limitedProducts, totalCount);
     if(selectedDropdownIndex === -1) {
       highlightDropdownItem(0);
@@ -1474,9 +1474,10 @@ function selectProduct(productName){
     searchInput.dataset.selected = 'true';
   }
   hideProductDropdown();
-  // Don't auto-focus input on mobile to avoid keyboard issues
-  if (window.innerWidth > 768) {
-    document.getElementById('jr-qty')?.focus();
+  // Focus on slider after product selection (works on all devices)
+  const slider = document.getElementById('jr-qty-slider');
+  if (slider) {
+    slider.focus();
   }
 }
 

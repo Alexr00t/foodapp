@@ -57,6 +57,53 @@ h1{font-size:24px;margin:0 0 6px}
   .version-time {
     font-size: 10px;
   }
+  
+  /* Reduce padding on mobile for more space */
+  .wrap {
+    padding: 0 8px;
+    margin: 12px auto;
+    overflow-x: hidden;
+  }
+  
+  .card {
+    padding: 12px;
+    overflow-x: hidden;
+  }
+  
+  .journal-controls {
+    gap: 8px;
+    overflow-x: hidden;
+  }
+  
+  .jr-product-selection-container {
+    padding: 12px;
+    margin: 8px 0;
+    overflow-x: hidden;
+  }
+  
+  .jr-product-details-card {
+    padding: 12px;
+    overflow-x: hidden;
+  }
+  
+  .jr-quantity-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    overflow-x: hidden;
+  }
+  
+  .quantity-slider-section {
+    margin-bottom: 12px;
+    padding: 8px 0;
+    overflow-x: hidden;
+  }
+  
+  /* Prevent any element from overflowing */
+  .jc-row, .jc-row-meta, .jc-row-filters, .jc-row-product {
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
 h2{font-size:18px;margin:18px 0 8px}
 .wrap{max-width:1100px;margin:24px auto;padding:0 16px;width:100%;box-sizing:border-box}
@@ -839,10 +886,10 @@ textarea {
 @media(max-width:720px){
   .dash-head{flex-direction:column;align-items:flex-start;}
   .quick-body{grid-template-columns:1fr;}
-  .journal-controls{gap:12px;}
+  .journal-controls{gap:8px;}
   .jc-row{flex-direction:column;align-items:stretch;}
   .jc-row .jc-group{width:100%;}
-  .jc-row-meta{flex-direction:row;gap:8px;}
+  .jc-row-meta{flex-direction:row;gap:6px;}
   .jc-row-meta .jc-group{width:auto;flex:0 0 auto;}
   .jc-row-meta .jc-qty{flex:0 0 70px;}
   .jc-row-meta .jc-unit{flex:0 0 70px;}
@@ -870,6 +917,61 @@ textarea {
   }
   .spacer{
     display: none;
+  }
+  
+  /* Equal width fields on mobile */
+  .jc-row-filters .jc-group {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .jc-row-filters .jc-group select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .jc-row-product .jc-group {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  
+  .jc-row-product .jc-group input {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure slider and input row fit properly */
+  .quantity-slider-section {
+    margin: 0;
+    padding: 8px 0;
+  }
+  
+  .quantity-slider {
+    width: 100%;
+    margin: 0;
+  }
+  
+  /* Fix product search field overflow */
+  .jc-row-product {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .jc-row-product .jc-search-box {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .jc-row-product .jc-search-box input {
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px;
   }
 }
 
