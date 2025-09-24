@@ -4297,6 +4297,14 @@ function addProductToJournal(productName){
     const input = document.getElementById('jr-qty');
     if (slider && input) {
       input.value = slider.value;
+      // On mobile, don't exit edit mode completely - just make readonly
+      if (window.innerWidth <= 768) {
+        // Don't remove editable class - keep it for future editing
+        // input.classList.remove('editable');
+        input.setAttribute('readonly', 'true');
+        input.blur();
+        slider.focus();
+      }
     }
   });
   
@@ -4354,17 +4362,68 @@ function addProductToJournal(productName){
     }
   });
   
+  // Also handle when user tries to focus input after using slider
+  document.getElementById('jr-qty')?.addEventListener('focus', function(event) {
+    console.log('Input focus event, window width:', window.innerWidth);
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        // Always make it editable when focused
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
+        console.log('Input made editable on focus');
+      }
+    }
+  });
+  
+  // Prevent blur when input is being edited
+  document.getElementById('jr-qty')?.addEventListener('blur', function(event) {
+    console.log('Input blur event, window width:', window.innerWidth);
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input && input.classList.contains('editable')) {
+        // Keep focus if it's in edit mode
+        setTimeout(() => {
+          if (input.classList.contains('editable')) {
+            input.focus();
+            console.log('Input refocused to maintain edit mode');
+          }
+        }, 10);
+      }
+    }
+  });
+  
   // Also handle mousedown for better compatibility
   document.getElementById('jr-qty')?.addEventListener('mousedown', function(event) {
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
+        console.log('Input mousedown, making editable');
         // Remove readonly and make editable
         input.removeAttribute('readonly');
         input.classList.add('editable');
         // Allow focus after a short delay
         setTimeout(() => {
           input.focus();
+          console.log('Input focused via mousedown');
+        }, 50);
+      }
+    }
+  });
+  
+  // Handle when user tries to interact with input after using slider
+  document.getElementById('jr-qty')?.addEventListener('pointerdown', function(event) {
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        console.log('Input pointerdown, making editable');
+        // Remove readonly and make editable
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
+        // Allow focus after a short delay
+        setTimeout(() => {
+          input.focus();
+          console.log('Input focused via pointerdown');
         }, 50);
       }
     }
@@ -4890,13 +4949,16 @@ function updateProductMobileBarCharts(product) {
     const slider = document.getElementById('jr-qty-slider');
     const input = document.getElementById('jr-qty');
     if (slider && input) {
-      // Keep input readonly on mobile
-      input.classList.remove('editable');
+      // Keep input readonly on mobile but don't remove editable class
+      // input.classList.remove('editable');
       input.setAttribute('readonly', 'true');
       // Focus slider for easy interaction (with delay to ensure it works)
       setTimeout(() => {
         slider.focus();
-        input.blur();
+        // Only blur if not in edit mode
+        if (document.activeElement !== input) {
+          input.blur();
+        }
       }, 100);
     }
   }
@@ -4920,9 +4982,12 @@ function updateMobileBarChartsWithQuantity() {
   const slider = document.getElementById('jr-qty-slider');
   if (slider) {
     slider.value = quantity;
-    // On mobile, focus slider instead of input
+    // On mobile, focus slider only if input is not being edited
     if (window.innerWidth <= 768) {
-      slider.focus();
+      const input = document.getElementById('jr-qty');
+      if (input && document.activeElement !== input) {
+        slider.focus();
+      }
     }
   }
   
@@ -4968,11 +5033,14 @@ function updateMobileBarChartsWithSlider() {
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // On mobile, keep input readonly and remove focus
+    // On mobile, keep input readonly and remove focus only if not in edit mode
     if (window.innerWidth <= 768) {
-      input.blur();
-      input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
+      // Only blur if not in edit mode (not focused)
+      if (document.activeElement !== input) {
+        input.blur();
+        input.setAttribute('readonly', 'true');
+      }
+      // Don't remove editable class - keep it for future editing
     }
   }
   
