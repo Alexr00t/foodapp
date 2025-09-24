@@ -581,7 +581,7 @@ textarea {
 .jc-search-hint{font-size:12px;color:var(--muted,#757575);}
 .jc-row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;}
 .jc-row-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;}
-.jc-group.jc-qty{min-width:200px;flex:1 1 200px;}
+.jc-group.jc-qty{min-width:120px;flex:0 0 120px;}
 .jc-group.jc-unit{min-width:70px;flex:0 0 70px;}
 .jc-group.jc-unit-display{min-width:50px;flex:0 0 50px;}
 .jc-row-date .jc-group{min-width:160px;}
@@ -602,11 +602,9 @@ textarea {
 .jc-group.jc-action{flex:0 0 auto;min-width:100px;}
 
 /* Quantity Slider Styles */
-.quantity-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
+.quantity-slider-section {
+  margin-bottom: 16px;
+  padding: 12px 0;
 }
 
 .quantity-slider {
@@ -618,6 +616,17 @@ textarea {
   -webkit-appearance: none;
   appearance: none;
   cursor: pointer;
+}
+
+.quantity-input {
+  width: 100%;
+  max-width: 100px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
 }
 
 .quantity-slider::-webkit-slider-thumb {
@@ -1164,10 +1173,15 @@ textarea {
     min-height: 40px;
   }
   
-  /* Mobile layout adjustments for wider slider */
+  /* Mobile layout adjustments */
+  .quantity-slider-section {
+    margin-bottom: 12px;
+    padding: 8px 0;
+  }
+  
   .jc-group.jc-qty {
-    min-width: 100%;
-    flex: 1 1 100%;
+    min-width: 100px;
+    flex: 0 0 100px;
   }
   
   .jc-group.jc-action {
@@ -1179,5 +1193,10 @@ textarea {
     min-width: 80px;
     font-size: 14px;
     padding: 8px 12px;
+  }
+  
+  .quantity-input {
+    max-width: 90px;
+    font-size: 16px;
   }
 }

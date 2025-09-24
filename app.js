@@ -4283,6 +4283,10 @@ function addProductToJournal(productName){
   document.getElementById('jr-qty-slider')?.addEventListener('input', updateMobileBarChartsWithSlider);
   document.getElementById('jr-unit')?.addEventListener('change', updateMobileBarChartsWithQuantity);
   
+  // Sync slider with input
+  document.getElementById('jr-qty')?.addEventListener('input', syncSliderWithInput);
+  document.getElementById('jr-qty-slider')?.addEventListener('input', syncInputWithSlider);
+  
   // Show current folder information
   showCurrentFolderInfo();
   whenChartReady(initCompare);
@@ -4777,6 +4781,12 @@ function updateMobileBarChartsWithQuantity() {
   const quantity = parseFloat(quantityInput.value) || 0;
   const unit = unitSelect.value;
   
+  // Sync with slider
+  const slider = document.getElementById('jr-qty-slider');
+  if (slider) {
+    slider.value = quantity;
+  }
+  
   // Create a temporary entry to calculate nutrients with the current quantity
   const tempEntry = {
     product: product.name,
@@ -4809,20 +4819,16 @@ function updateMobileBarChartsWithSlider() {
   if (!product) return;
   
   const slider = document.getElementById('jr-qty-slider');
-  const display = document.getElementById('jr-qty-display');
   const unitSelect = document.getElementById('jr-unit');
-  if (!slider || !display || !unitSelect) return;
+  if (!slider || !unitSelect) return;
   
   const quantity = parseFloat(slider.value) || 0;
   const unit = unitSelect.value;
   
-  // Update display
-  display.textContent = quantity;
-  
-  // Update hidden input for compatibility
-  const hiddenInput = document.getElementById('jr-qty');
-  if (hiddenInput) {
-    hiddenInput.value = quantity;
+  // Sync with input field
+  const input = document.getElementById('jr-qty');
+  if (input) {
+    input.value = quantity;
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
