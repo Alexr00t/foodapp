@@ -4293,9 +4293,9 @@ function addProductToJournal(productName){
     if (input) {
       input.classList.remove('editable');
       input.setAttribute('readonly', 'true');
-      // Prevent focus on mobile
+      // Prevent focus on mobile only when not editable
       input.addEventListener('focus', function(e) {
-        if (window.innerWidth <= 768) {
+        if (window.innerWidth <= 768 && !input.classList.contains('editable')) {
           e.preventDefault();
           input.blur();
         }
@@ -4308,9 +4308,13 @@ function addProductToJournal(productName){
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
-        input.classList.add('editable');
+        // Remove readonly and make editable
         input.removeAttribute('readonly');
-        input.focus();
+        input.classList.add('editable');
+        // Allow focus after a short delay
+        setTimeout(() => {
+          input.focus();
+        }, 50);
       }
     }
   });
@@ -4320,9 +4324,41 @@ function addProductToJournal(productName){
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
-        input.classList.add('editable');
+        // Remove readonly and make editable
         input.removeAttribute('readonly');
-        input.focus();
+        input.classList.add('editable');
+        // Allow focus after a short delay
+        setTimeout(() => {
+          input.focus();
+        }, 50);
+      }
+    }
+  });
+  
+  // Also handle mousedown for better compatibility
+  document.getElementById('jr-qty')?.addEventListener('mousedown', function(event) {
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        // Remove readonly and make editable
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
+        // Allow focus after a short delay
+        setTimeout(() => {
+          input.focus();
+        }, 50);
+      }
+    }
+  });
+  
+  // Handle focus event to make input editable when focused
+  document.getElementById('jr-qty')?.addEventListener('focus', function(event) {
+    if (window.innerWidth <= 768) {
+      const input = document.getElementById('jr-qty');
+      if (input) {
+        // Make sure it's editable when focused
+        input.removeAttribute('readonly');
+        input.classList.add('editable');
       }
     }
   });
@@ -4335,9 +4371,9 @@ function addProductToJournal(productName){
         // Mobile: make readonly by default
         input.classList.remove('editable');
         input.setAttribute('readonly', 'true');
-        // Prevent focus on mobile
+        // Prevent focus on mobile only when not editable
         input.addEventListener('focus', function(e) {
-          if (window.innerWidth <= 768) {
+          if (window.innerWidth <= 768 && !input.classList.contains('editable')) {
             e.preventDefault();
             input.blur();
           }
