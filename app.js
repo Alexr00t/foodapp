@@ -1460,6 +1460,14 @@ function selectProduct(productName){
   // Update category and restaurant filters based on selected product
   updateFiltersFromProduct(product);
 
+  // Configure slider bounds based on the selected unit
+  const unitSelect = document.getElementById('jr-unit');
+  const unitDisplay = document.getElementById('jr-unit-display');
+  const currentUnit = (unitSelect?.value || unitDisplay?.textContent || '').trim().toLowerCase();
+  if (currentUnit) {
+    configureQuantitySliderForUnit(currentUnit);
+  }
+
   const searchInput = document.getElementById('jr-product-search');
   if(searchInput){
     searchInput.value = productName;
@@ -1683,6 +1691,9 @@ function updateUnitDisplay(product){
   }
   
   unitDisplay.textContent = unitText;
+  
+  // Configure slider bounds based on the updated unit
+  configureQuantitySliderForUnit(unitText);
 }
 
 function updateAvailableProductsCount(){
@@ -4229,6 +4240,27 @@ function addProductToJournal(productName){
 // Store currently selected product for the "Add to Journal" button
 // (currentSelectedProduct is already declared globally above)
 
+// Adjust slider bounds based on unit (buc -> 1..10, else -> 0..1000)
+function configureQuantitySliderForUnit(unit) {
+  const slider = document.getElementById('jr-qty-slider');
+  const input = document.getElementById('jr-qty');
+  if (!slider) return;
+  if (unit === 'buc') {
+    slider.min = '1';
+    slider.max = '10';
+    slider.step = '1';
+    if (parseFloat(slider.value || '0') < 1) slider.value = '1';
+    if (input) {
+      if (parseFloat(input.value || '0') < 1) input.value = '1';
+    }
+  } else {
+    slider.min = '0';
+    slider.max = '1000';
+    slider.step = '1';
+    if (parseFloat(slider.value || '0') < 0) slider.value = '0';
+  }
+}
+
 // --------- Init ---------
 (async function init(){
   // First, try to load data from JSON files
@@ -4282,6 +4314,13 @@ function addProductToJournal(productName){
   document.getElementById('jr-qty')?.addEventListener('input', updateMobileBarChartsWithQuantity);
   document.getElementById('jr-qty-slider')?.addEventListener('input', updateMobileBarChartsWithSlider);
   document.getElementById('jr-unit')?.addEventListener('change', updateMobileBarChartsWithQuantity);
+  // Also reconfigure slider bounds when unit changes
+  document.getElementById('jr-unit')?.addEventListener('change', function(e){
+    try {
+      const unit = e?.target?.value;
+      if (unit) configureQuantitySliderForUnit(unit);
+    } catch(_){}
+  });
   
   // Sync slider with input (but prevent keyboard on mobile)
   document.getElementById('jr-qty')?.addEventListener('input', function() {
@@ -4297,147 +4336,42 @@ function addProductToJournal(productName){
     const input = document.getElementById('jr-qty');
     if (slider && input) {
       input.value = slider.value;
-      // On mobile, don't exit edit mode completely - just make readonly
+      // On mobile, exit edit mode when slider is used
       if (window.innerWidth <= 768) {
-        // Don't remove editable class - keep it for future editing
-        // input.classList.remove('editable');
+        input.classList.remove('editable');
         input.setAttribute('readonly', 'true');
         input.blur();
         slider.focus();
       }
     }
   });
+
+  // Initial configuration of slider bounds based on current unit/display
+  try {
+    const unitSelectEl = document.getElementById('jr-unit');
+    const unitDisplayEl = document.getElementById('jr-unit-display');
+    const initialUnit = (unitSelectEl?.value || unitDisplayEl?.textContent || '').trim().toLowerCase();
+    if (initialUnit) configureQuantitySliderForUnit(initialUnit);
+  } catch(_){}
   
-  // Mobile: make input readonly by default, editable only when touched
+  // Mobile: make input readonly by default
   if (window.innerWidth <= 768) {
     const input = document.getElementById('jr-qty');
     if (input) {
       input.classList.remove('editable');
       input.setAttribute('readonly', 'true');
-      // Prevent focus on mobile only when not editable
-      input.addEventListener('focus', function(e) {
-        if (window.innerWidth <= 768 && !input.classList.contains('editable')) {
-          e.preventDefault();
-          input.blur();
-        }
-      });
     }
   }
   
-  // Make input editable when directly touched on mobile
-  document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
-    console.log('Input touchstart, window width:', window.innerWidth);
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        console.log('Making input editable via touchstart');
-        // Remove readonly and make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        // Allow focus after a short delay
-        setTimeout(() => {
-          input.focus();
-          console.log('Input focused via touchstart');
-        }, 50);
-      }
-    }
-  }, { passive: true });
-  
-  // Make input editable when clicked on mobile
+  // Make input editable when clicked/touched on mobile
   document.getElementById('jr-qty')?.addEventListener('click', function(event) {
-    console.log('Input clicked, window width:', window.innerWidth);
     if (window.innerWidth <= 768) {
       const input = document.getElementById('jr-qty');
       if (input) {
-        console.log('Making input editable');
-        // Remove readonly and make editable
+        // Make editable
         input.removeAttribute('readonly');
         input.classList.add('editable');
-        // Allow focus after a short delay
-        setTimeout(() => {
-          input.focus();
-          console.log('Input focused');
-        }, 50);
-      }
-    }
-  });
-  
-  // Also handle when user tries to focus input after using slider
-  document.getElementById('jr-qty')?.addEventListener('focus', function(event) {
-    console.log('Input focus event, window width:', window.innerWidth);
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        // Always make it editable when focused
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        console.log('Input made editable on focus');
-      }
-    }
-  });
-  
-  // Prevent blur when input is being edited
-  document.getElementById('jr-qty')?.addEventListener('blur', function(event) {
-    console.log('Input blur event, window width:', window.innerWidth);
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input && input.classList.contains('editable')) {
-        // Keep focus if it's in edit mode
-        setTimeout(() => {
-          if (input.classList.contains('editable')) {
-            input.focus();
-            console.log('Input refocused to maintain edit mode');
-          }
-        }, 10);
-      }
-    }
-  });
-  
-  // Also handle mousedown for better compatibility
-  document.getElementById('jr-qty')?.addEventListener('mousedown', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        console.log('Input mousedown, making editable');
-        // Remove readonly and make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        // Allow focus after a short delay
-        setTimeout(() => {
-          input.focus();
-          console.log('Input focused via mousedown');
-        }, 50);
-      }
-    }
-  });
-  
-  // Handle when user tries to interact with input after using slider
-  document.getElementById('jr-qty')?.addEventListener('pointerdown', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        console.log('Input pointerdown, making editable');
-        // Remove readonly and make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        // Allow focus after a short delay
-        setTimeout(() => {
-          input.focus();
-          console.log('Input focused via pointerdown');
-        }, 50);
-      }
-    }
-  });
-  
-  // Handle focus event to make input editable when focused
-  document.getElementById('jr-qty')?.addEventListener('focus', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        // Make sure it's editable when focused
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        console.log('Input made editable on focus');
+        input.focus();
       }
     }
   });
@@ -4450,13 +4384,6 @@ function addProductToJournal(productName){
         // Mobile: make readonly by default
         input.classList.remove('editable');
         input.setAttribute('readonly', 'true');
-        // Prevent focus on mobile only when not editable
-        input.addEventListener('focus', function(e) {
-          if (window.innerWidth <= 768 && !input.classList.contains('editable')) {
-            e.preventDefault();
-            input.blur();
-          }
-        });
       } else {
         // Desktop: always editable
         input.classList.add('editable');
@@ -4944,22 +4871,21 @@ function updateProductMobileBarCharts(product) {
   
   dbgGroupEnd(); // End updateProductMobileBarCharts
   
-  // On mobile, focus slider and make input readonly
+  // On mobile, only enforce readonly if not currently editing
   if (window.innerWidth <= 768) {
     const slider = document.getElementById('jr-qty-slider');
     const input = document.getElementById('jr-qty');
     if (slider && input) {
-      // Keep input readonly on mobile but don't remove editable class
-      // input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
-      // Focus slider for easy interaction (with delay to ensure it works)
-      setTimeout(() => {
-        slider.focus();
-        // Only blur if not in edit mode
-        if (document.activeElement !== input) {
+      const isEditing = document.activeElement === input || input.classList.contains('editable');
+      if (!isEditing) {
+        input.classList.remove('editable');
+        input.setAttribute('readonly', 'true');
+        // Keep slider ready for interaction
+        setTimeout(() => {
+          slider.focus();
           input.blur();
-        }
-      }, 100);
+        }, 0);
+      }
     }
   }
 }
@@ -5033,14 +4959,11 @@ function updateMobileBarChartsWithSlider() {
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // On mobile, keep input readonly and remove focus only if not in edit mode
+    // On mobile, exit edit mode when slider is used
     if (window.innerWidth <= 768) {
-      // Only blur if not in edit mode (not focused)
-      if (document.activeElement !== input) {
-        input.blur();
-        input.setAttribute('readonly', 'true');
-      }
-      // Don't remove editable class - keep it for future editing
+      input.classList.remove('editable');
+      input.setAttribute('readonly', 'true');
+      input.blur();
     }
   }
   
