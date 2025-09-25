@@ -13,8 +13,8 @@
     <div class="app-header">
       <h1>Jurnal Calorii & Nutrienți</h1>
       <div class="app-version">
-        <span class="version-number">v1.1.0</span>
-        <span class="version-time">2024-12-19 19:00</span>
+        <span class="version-number">v1.0.6</span>
+        <span class="version-time">2024-12-19 22:15</span>
       </div>
     </div>
 
@@ -160,6 +160,108 @@
                   </div>
                 </div>
                 
+                <!-- Desktop bar charts for product details -->
+                <div class="desktop-bar-chart product-desktop-charts">
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="calories">Calorii</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-cal">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-cal">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-cal">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-cal">0%</div>
+                    </div>
+                  </div>
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="fat">Grăsimi</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-fat">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-fat">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-fat">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-fat">0%</div>
+                    </div>
+                  </div>
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="sat">Saturate</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-sat">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-sat">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-sat">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-sat">0%</div>
+                    </div>
+                  </div>
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="carbs">Carbohidrați</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-carb">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-carb">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-carb">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-carb">0%</div>
+                    </div>
+                  </div>
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="sugar">Zaharuri</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-sug">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-sug">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-sug">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-sug">0%</div>
+                    </div>
+                  </div>
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="fiber">Fibre</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-fib">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-fib">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-fib">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-fib">0%</div>
+                    </div>
+                  </div>
+                  <div class="desktop-bar-item">
+                    <div class="desktop-bar-label" data-label="protein">Proteine</div>
+                    <div class="desktop-bar-product-values">
+                      <div class="desktop-bar-value" id="jr-product-desktop-value-pro">0</div>
+                      <span class="desktop-bar-percentage" id="jr-product-desktop-percent-pro">(0%)</span>
+                    </div>
+                    <div class="desktop-bar-container" id="jr-product-desktop-bar-pro">
+                      <div class="desktop-bar-fill" data-state="empty"></div>
+                      <div class="desktop-bar-over" style="width:0%"></div>
+                      <div class="desktop-bar-target-line"></div>
+                      <div class="desktop-bar-contribution" data-state="empty"></div>
+                      <div class="desktop-bar-daily-percent" id="jr-product-desktop-daily-percent-pro">0%</div>
+                    </div>
+                  </div>
+                </div>
+                
                 <!-- Mobile bar charts for product details -->
                 <div class="mobile-bar-chart product-mobile-charts">
                   <div class="mobile-bar-item">
@@ -177,17 +279,31 @@
                     </div>
                   </div>
                   <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="protein">Prot</div>
+                    <div class="mobile-bar-label" data-label="fat">Grăs</div>
                     <div class="mobile-bar-product-values">
-                      <div class="mobile-bar-value" id="jr-product-mobile-value-pro">0</div>
-                      <span class="mobile-bar-percentage" id="jr-product-mobile-percent-pro">(0%)</span>
+                      <div class="mobile-bar-value" id="jr-product-mobile-value-fat">0</div>
+                      <span class="mobile-bar-percentage" id="jr-product-mobile-percent-fat">(0%)</span>
                     </div>
-                    <div class="mobile-bar-container" id="jr-product-mobile-bar-pro">
+                    <div class="mobile-bar-container" id="jr-product-mobile-bar-fat">
                       <div class="mobile-bar-fill" data-state="empty"></div>
                       <div class="mobile-bar-over" style="width:0%"></div>
                       <div class="mobile-bar-target-line"></div>
                       <div class="mobile-bar-contribution" data-state="empty"></div>
-                      <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-pro">0%</div>
+                      <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-fat">0%</div>
+                    </div>
+                  </div>
+                  <div class="mobile-bar-item">
+                    <div class="mobile-bar-label" data-label="sat">Sat</div>
+                    <div class="mobile-bar-product-values">
+                      <div class="mobile-bar-value" id="jr-product-mobile-value-sat">0</div>
+                      <span class="mobile-bar-percentage" id="jr-product-mobile-percent-sat">(0%)</span>
+                    </div>
+                    <div class="mobile-bar-container" id="jr-product-mobile-bar-sat">
+                      <div class="mobile-bar-fill" data-state="empty"></div>
+                      <div class="mobile-bar-over" style="width:0%"></div>
+                      <div class="mobile-bar-target-line"></div>
+                      <div class="mobile-bar-contribution" data-state="empty"></div>
+                      <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-sat">0%</div>
                     </div>
                   </div>
                   <div class="mobile-bar-item">
@@ -202,20 +318,6 @@
                       <div class="mobile-bar-target-line"></div>
                       <div class="mobile-bar-contribution" data-state="empty"></div>
                       <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-carb">0%</div>
-                    </div>
-                  </div>
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="fat">Grăs</div>
-                    <div class="mobile-bar-product-values">
-                      <div class="mobile-bar-value" id="jr-product-mobile-value-fat">0</div>
-                      <span class="mobile-bar-percentage" id="jr-product-mobile-percent-fat">(0%)</span>
-                    </div>
-                    <div class="mobile-bar-container" id="jr-product-mobile-bar-fat">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                      <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-fat">0%</div>
                     </div>
                   </div>
                   <div class="mobile-bar-item">
@@ -244,6 +346,20 @@
                       <div class="mobile-bar-target-line"></div>
                       <div class="mobile-bar-contribution" data-state="empty"></div>
                       <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-fib">0%</div>
+                    </div>
+                  </div>
+                  <div class="mobile-bar-item">
+                    <div class="mobile-bar-label" data-label="protein">Prot</div>
+                    <div class="mobile-bar-product-values">
+                      <div class="mobile-bar-value" id="jr-product-mobile-value-pro">0</div>
+                      <span class="mobile-bar-percentage" id="jr-product-mobile-percent-pro">(0%)</span>
+                    </div>
+                    <div class="mobile-bar-container" id="jr-product-mobile-bar-pro">
+                      <div class="mobile-bar-fill" data-state="empty"></div>
+                      <div class="mobile-bar-over" style="width:0%"></div>
+                      <div class="mobile-bar-target-line"></div>
+                      <div class="mobile-bar-contribution" data-state="empty"></div>
+                      <div class="mobile-bar-daily-percent" id="jr-product-mobile-daily-percent-pro">0%</div>
                     </div>
                   </div>
                 </div>
@@ -321,7 +437,7 @@
           <tbody id="jr-totals" class="totals"></tbody>
           <tbody id="jr-pies" class="pies">
             <!-- Desktop donut charts -->
-            <tr class="desktop-donut-chart">
+            <tr class="desktop-donut-row">
               <td></td>
               <td></td>
               <td></td>
@@ -334,78 +450,19 @@
               <td id="jr-desktop-donut-pro"></td>
               <td></td>
             </tr>
-            <!-- Mobile bar charts -->
-            <tr class="mobile-bar-chart">
-              <td colspan="11">
-                <div class="mobile-bar-chart">
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="calories">Cal</div>
-                    <div class="mobile-bar-container" id="jr-mobile-bar-cal">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                    </div>
-                    <div class="mobile-bar-value" id="jr-mobile-value-cal">0</div>
-                    <div class="mobile-bar-percentage" id="jr-mobile-percent-cal">0%</div>
-                  </div>
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="protein">Prot</div>
-                    <div class="mobile-bar-container" id="jr-mobile-bar-pro">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                    </div>
-                    <div class="mobile-bar-value" id="jr-mobile-value-pro">0</div>
-                    <div class="mobile-bar-percentage" id="jr-mobile-percent-pro">0%</div>
-                  </div>
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="carbs">Carb</div>
-                    <div class="mobile-bar-container" id="jr-mobile-bar-carb">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                    </div>
-                    <div class="mobile-bar-value" id="jr-mobile-value-carb">0</div>
-                    <div class="mobile-bar-percentage" id="jr-mobile-percent-carb">0%</div>
-                  </div>
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="fat">Grăs</div>
-                    <div class="mobile-bar-container" id="jr-mobile-bar-fat">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                    </div>
-                    <div class="mobile-bar-value" id="jr-mobile-value-fat">0</div>
-                    <div class="mobile-bar-percentage" id="jr-mobile-percent-fat">0%</div>
-                  </div>
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="sugar">Zah</div>
-                    <div class="mobile-bar-container" id="jr-mobile-bar-sug">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                    </div>
-                    <div class="mobile-bar-value" id="jr-mobile-value-sug">0</div>
-                    <div class="mobile-bar-percentage" id="jr-mobile-percent-sug">0%</div>
-                  </div>
-                  <div class="mobile-bar-item">
-                    <div class="mobile-bar-label" data-label="fiber">Fib</div>
-                    <div class="mobile-bar-container" id="jr-mobile-bar-fib">
-                      <div class="mobile-bar-fill" data-state="empty"></div>
-                      <div class="mobile-bar-over" style="width:0%"></div>
-                      <div class="mobile-bar-target-line"></div>
-                      <div class="mobile-bar-contribution" data-state="empty"></div>
-                    </div>
-                    <div class="mobile-bar-value" id="jr-mobile-value-fib">0</div>
-                    <div class="mobile-bar-percentage" id="jr-mobile-percent-fib">0%</div>
-                  </div>
-                </div>
-              </td>
+            <!-- Mobile donut charts -->
+            <tr class="mobile-donut-chart">
+              <td class="sticky"></td>
+              <td class="sticky"></td>
+              <td class="sticky"></td>
+              <td class="sticky" id="jr-mobile-donut-cal"><canvas></canvas></td>
+              <td class="sticky" id="jr-mobile-donut-fat"><canvas></canvas></td>
+              <td class="sticky" id="jr-mobile-donut-sat"><canvas></canvas></td>
+              <td class="sticky" id="jr-mobile-donut-carb"><canvas></canvas></td>
+              <td class="sticky" id="jr-mobile-donut-sug"><canvas></canvas></td>
+              <td class="sticky" id="jr-mobile-donut-fib"><canvas></canvas></td>
+              <td class="sticky" id="jr-mobile-donut-pro"><canvas></canvas></td>
+              <td class="sticky"></td>
             </tr>
           </tbody>
         </table>

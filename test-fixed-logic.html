@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Fixed Logic - Mobile Bar Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Test Fixed Logic - Mobile Bar Charts</h1>
+    
+    <div class="card">
+      <h2>Problemele Corectate</h2>
+      <ul>
+        <li>✅ <strong>Graficele nu ies din spațiul lor</strong> - limitate la 200% max</li>
+        <li>✅ <strong>Valorile absolute</strong> pentru nutrienți afișate</li>
+        <li>✅ <strong>Procentul actual vs target</strong> pe fiecare nutrient</li>
+        <li>✅ <strong>Linia verticală la 50%</strong> = 100% din target</li>
+      </ul>
+    </div>
+    
+    <div class="card">
+      <h2>Test Mobile Bar Charts - Corectate</h2>
+      
+      <!-- Test Case 1: Under target -->
+      <div class="mobile-bar-chart">
+        <h4>Test 1: Consum 78% + Produs 4% = 82% (sub target)</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Cal</div>
+          <div class="mobile-bar-container" id="test1-cal">
+            <div class="mobile-bar-fill" data-state="under" style="width: 156%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="under" style="width: 8%;"></div>
+          </div>
+          <div class="mobile-bar-value">80</div>
+          <div class="mobile-bar-percentage">4%</div>
+          <div class="mobile-bar-daily-percent">78%</div>
+        </div>
+      </div>
+      
+      <!-- Test Case 2: Over target -->
+      <div class="mobile-bar-chart">
+        <h4>Test 2: Consum 95% + Produs 10% = 105% (peste target)</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Prot</div>
+          <div class="mobile-bar-container" id="test2-pro">
+            <div class="mobile-bar-fill" data-state="under" style="width: 190%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="over" style="width: 20%;"></div>
+          </div>
+          <div class="mobile-bar-value">13</div>
+          <div class="mobile-bar-percentage">10%</div>
+          <div class="mobile-bar-daily-percent">95%</div>
+        </div>
+      </div>
+      
+      <!-- Test Case 3: Already over target -->
+      <div class="mobile-bar-chart">
+        <h4>Test 3: Consum 110% + Produs 5% = 115% (deja peste target)</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Carb</div>
+          <div class="mobile-bar-container" id="test3-carb">
+            <div class="mobile-bar-fill" data-state="over" style="width: 200%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="over" style="width: 10%;"></div>
+          </div>
+          <div class="mobile-bar-value">13</div>
+          <div class="mobile-bar-percentage">5%</div>
+          <div class="mobile-bar-daily-percent">110%</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Legenda Valorilor</h2>
+      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 20px; height: 20px; background: var(--text); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--bg); font-size: 10px; font-weight: bold;">80</div>
+          <span>Valoarea absolută a produsului</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 20px; height: 20px; background: var(--muted); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--bg); font-size: 10px; font-weight: bold;">4%</div>
+          <span>Procentul produsului vs target</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="width: 20px; height: 20px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--bg); font-size: 10px; font-weight: bold;">78%</div>
+          <span>Procentul consumului zilnic vs target</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Set target lines at 50% (represents 100% of target)
+    document.addEventListener('DOMContentLoaded', () => {
+      const targetLines = document.querySelectorAll('.mobile-bar-target-line');
+      targetLines.forEach(line => {
+        line.style.left = '50%';
+      });
+    });
+  </script>
+</body>
+</html>

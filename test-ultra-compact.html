@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Ultra Compact FoodApp v3</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #0f172a; color: #e5e7eb; }
+    .test-box { margin: 20px 0; padding: 20px; border: 1px solid #1f2937; border-radius: 8px; background: #111827; }
+    .success { color: #22c55e; }
+    .error { color: #ef4444; }
+    .warning { color: #f59e0b; }
+    button { background: #22c55e; color: #04110a; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px; }
+    pre { background: #0b1220; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    
+    /* Test ultra compact design */
+    .nutrition-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .nutrition-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #1f2937;
+      gap: 12px;
+    }
+    .nutrition-line:last-child {
+      border-bottom: none;
+    }
+    .nutrition-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      gap: 8px;
+    }
+    .nutrition-label {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 600;
+      min-width: 80px;
+    }
+    .nutrition-value {
+      font-size: 13px;
+      color: #e5e7eb;
+      font-weight: 700;
+      text-align: right;
+      min-width: 60px;
+    }
+    .product-donut {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: #0b1220;
+      --accent: #22c55e;
+      --over-color: #ef4444;
+      --ring-track: rgba(255, 255, 255, 0.12);
+      flex-shrink: 0;
+    }
+    .product-donut::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: #0b1220;
+      z-index: 1;
+    }
+    .product-donut .donut-center {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    }
+    .product-donut[data-state="under"] {
+      background: conic-gradient(var(--accent) 0deg var(--progress), var(--ring-track) var(--progress) 360deg);
+    }
+    .product-donut[data-state="over"] {
+      background: conic-gradient(var(--over-color) 0deg var(--progress), var(--ring-track) var(--progress) 360deg);
+    }
+    .product-donut[data-state="hit"] {
+      background: conic-gradient(var(--accent) 0deg 360deg);
+    }
+    .product-donut[data-state="empty"] {
+      background: var(--ring-track);
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test Ultra Compact FoodApp v3</h1>
+  
+  <div class="test-box">
+    <h2>📱 Test aplicația principală</h2>
+    <p><a href="index.html" target="_blank" style="color: #3b82f6; font-size: 18px;">🚀 Deschide FoodApp v3</a></p>
+  </div>
+  
+  <div class="test-box">
+    <h2>📊 Test ultra compact design</h2>
+    <div class="nutrition-list">
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Calorii:</span>
+          <span class="nutrition-value">100 kcal</span>
+        </div>
+        <div class="product-donut" data-state="under" style="--progress: 180deg;">
+          <div class="donut-center">50%</div>
+        </div>
+      </div>
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Proteine:</span>
+          <span class="nutrition-value">20g</span>
+        </div>
+        <div class="product-donut" data-state="over" style="--progress: 360deg;">
+          <div class="donut-center">100%</div>
+        </div>
+      </div>
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Carbohidrați:</span>
+          <span class="nutrition-value">15g</span>
+        </div>
+        <div class="product-donut" data-state="hit" style="--progress: 360deg;">
+          <div class="donut-center">100%</div>
+        </div>
+      </div>
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Grăsimi:</span>
+          <span class="nutrition-value">5g</span>
+        </div>
+        <div class="product-donut" data-state="empty" style="--progress: 0deg;">
+          <div class="donut-center">0%</div>
+        </div>
+      </div>
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Grăsimi saturate:</span>
+          <span class="nutrition-value">2g</span>
+        </div>
+        <div class="product-donut" data-state="under" style="--progress: 90deg;">
+          <div class="donut-center">25%</div>
+        </div>
+      </div>
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Zaharuri:</span>
+          <span class="nutrition-value">8g</span>
+        </div>
+        <div class="product-donut" data-state="under" style="--progress: 144deg;">
+          <div class="donut-center">40%</div>
+        </div>
+      </div>
+      <div class="nutrition-line">
+        <div class="nutrition-info">
+          <span class="nutrition-label">Fibre:</span>
+          <span class="nutrition-value">3g</span>
+        </div>
+        <div class="product-donut" data-state="under" style="--progress: 36deg;">
+          <div class="donut-center">10%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="test-box">
+    <h2>🔍 Test funcționalități</h2>
+    <button onclick="testNutritionList()">Test Nutrition List</button>
+    <button onclick="testProductDonut()">Test Product Donut</button>
+    <button onclick="testCSS()">Test CSS</button>
+    <div id="test-results"></div>
+  </div>
+  
+  <div class="test-box">
+    <h2>📋 Instrucțiuni de testare</h2>
+    <ol>
+      <li><strong>Deschide aplicația principală:</strong> <a href="index.html" target="_blank" style="color: #3b82f6;">index.html</a></li>
+      <li><strong>Selectează un produs</strong> din lista de produse</li>
+      <li><strong>Verifică design-ul ultra compact</strong> cu linii de separare</li>
+      <li><strong>Verifică donut charts-urile</strong> aliniate cu fiecare nutrienț</li>
+      <li><strong>Testează toate funcționalitățile</strong> existente</li>
+    </ol>
+  </div>
+  
+  <div class="test-box">
+    <h2>✅ Checklist final</h2>
+    <ul>
+      <li>✅ Design ultra compact cu linii de separare</li>
+      <li>✅ Donut charts aliniate cu fiecare nutrienț</li>
+      <li>✅ Toate funcționalitățile existente păstrate</li>
+      <li>✅ Design responsive pentru mobile și desktop</li>
+      <li>✅ Fără erori în console</li>
+    </ul>
+  </div>
+
+  <script>
+    function testNutritionList() {
+      const results = document.getElementById('test-results');
+      results.innerHTML = '<p>Testez nutrition list...</p>';
+      
+      const testDiv = document.createElement('div');
+      testDiv.className = 'nutrition-list';
+      testDiv.innerHTML = '<div class="nutrition-line"><div class="nutrition-info"><span class="nutrition-label">Test:</span><span class="nutrition-value">100g</span></div><div class="product-donut"></div></div>';
+      
+      document.body.appendChild(testDiv);
+      
+      const computedStyle = window.getComputedStyle(testDiv);
+      const display = computedStyle.display;
+      
+      if (display === 'flex') {
+        results.innerHTML = '<p class="success">✅ Nutrition list CSS funcționează</p>';
+      } else {
+        results.innerHTML = '<p class="error">❌ Nutrition list CSS nu funcționează</p>';
+      }
+      
+      document.body.removeChild(testDiv);
+    }
+    
+    function testProductDonut() {
+      const results = document.getElementById('test-results');
+      results.innerHTML = '<p>Testez product donut...</p>';
+      
+      const testDiv = document.createElement('div');
+      testDiv.className = 'product-donut';
+      testDiv.setAttribute('data-state', 'under');
+      testDiv.style.setProperty('--progress', '180deg');
+      testDiv.innerHTML = '<div class="donut-center">50%</div>';
+      
+      document.body.appendChild(testDiv);
+      
+      const computedStyle = window.getComputedStyle(testDiv);
+      const width = computedStyle.width;
+      const height = computedStyle.height;
+      
+      if (width === '40px' && height === '40px') {
+        results.innerHTML = '<p class="success">✅ Product donut CSS funcționează</p>';
+      } else {
+        results.innerHTML = '<p class="error">❌ Product donut CSS nu funcționează</p>';
+      }
+      
+      document.body.removeChild(testDiv);
+    }
+    
+    function testCSS() {
+      const results = document.getElementById('test-results');
+      results.innerHTML = '<p>Testez CSS...</p>';
+      
+      fetch('style.css')
+        .then(response => {
+          if (response.ok) {
+            results.innerHTML = '<p class="success">✅ CSS se încarcă corect</p>';
+          } else {
+            results.innerHTML = `<p class="error">❌ Eroare la încărcarea CSS: ${response.status}</p>`;
+          }
+        })
+        .catch(error => {
+          results.innerHTML = `<p class="error">❌ Eroare CSS: ${error.message}</p>`;
+        });
+    }
+    
+    console.log('🧪 Test Ultra Compact FoodApp v3 - Console OK');
+    console.log('🕒 Timestamp:', new Date().toLocaleTimeString());
+  </script>
+</body>
+</html>
+

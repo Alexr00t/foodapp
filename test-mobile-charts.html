@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Mobile Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Test Mobile vs Desktop Charts</h1>
+    
+    <div class="card">
+      <h2>Test Responsive Charts</h2>
+      <p>Redimensionează fereastra pentru a vedea diferența între mobile și desktop.</p>
+      
+      <!-- Test Mobile Bar Charts -->
+      <div class="mobile-bar-chart">
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label" data-label="calories">Cal</div>
+          <div class="mobile-bar-container" id="test-mobile-bar-cal">
+            <div class="mobile-bar-fill" data-state="under" style="width: 75%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="under" style="width: 25%;"></div>
+          </div>
+          <div class="mobile-bar-value">1500</div>
+          <div class="mobile-bar-percentage">75%</div>
+        </div>
+        
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label" data-label="protein">Prot</div>
+          <div class="mobile-bar-container" id="test-mobile-bar-pro">
+            <div class="mobile-bar-fill" data-state="over" style="width: 120%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="over" style="width: 30%;"></div>
+          </div>
+          <div class="mobile-bar-value">156</div>
+          <div class="mobile-bar-percentage">120%</div>
+        </div>
+        
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label" data-label="carbs">Carb</div>
+          <div class="mobile-bar-container" id="test-mobile-bar-carb">
+            <div class="mobile-bar-fill" data-state="hit" style="width: 95%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="hit" style="width: 20%;"></div>
+          </div>
+          <div class="mobile-bar-value">247</div>
+          <div class="mobile-bar-percentage">95%</div>
+        </div>
+      </div>
+      
+      <!-- Test Desktop Donut Charts -->
+      <div class="desktop-donut-chart">
+        <div class="donut-wrap">
+          <div class="donut" style="background: conic-gradient(var(--accent) 0deg 270deg, var(--ring-track) 270deg 360deg);">
+            <div class="donut-center">
+              <span class="donut-percent">75%</span>
+            </div>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut" style="background: conic-gradient(var(--over-color) 0deg 72deg, var(--accent) 72deg 360deg);">
+            <div class="donut-center">
+              <span class="donut-percent">120%</span>
+            </div>
+          </div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut" style="background: conic-gradient(var(--accent) 0deg 342deg, var(--ring-track) 342deg 360deg);">
+            <div class="donut-center">
+              <span class="donut-percent">95%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Instrucțiuni de testare:</h2>
+      <ul>
+        <li><strong>Mobile (≤768px):</strong> Ar trebui să vezi bare orizontale cu labeluri scurte (Cal, Prot, Carb, etc.)</li>
+        <li><strong>Desktop (≥1024px):</strong> Ar trebui să vezi donut charts</li>
+        <li><strong>Tablet (768px-1024px):</strong> Poate afișa oricare dintre ele</li>
+      </ul>
+      
+      <h3>Caracteristici mobile:</h3>
+      <ul>
+        <li>✅ Labeluri scurte: Cal, Prot, Carb, Grăs, Zah, Fib</li>
+        <li>✅ Bare orizontale în loc de pie charts</li>
+        <li>✅ Linie verticală la 100% (target line)</li>
+        <li>✅ Verde până la 100%, roșu pentru >100%</li>
+        <li>✅ Contribuția produsului ca overlay cu nuanțe diferite</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    // Test functionality
+    console.log('Test page loaded');
+    
+    // Simulate chart updates
+    function testChartUpdates() {
+      console.log('Testing chart updates...');
+      
+      // Test mobile bar chart update
+      const testBar = document.getElementById('test-mobile-bar-cal');
+      if (testBar) {
+        const fill = testBar.querySelector('.mobile-bar-fill');
+        const contribution = testBar.querySelector('.mobile-bar-contribution');
+        
+        console.log('Mobile bar chart elements found:', {
+          fill: !!fill,
+          contribution: !!contribution
+        });
+      }
+      
+      // Test desktop donut charts
+      const donutCharts = document.querySelectorAll('.desktop-donut-chart .donut');
+      console.log('Desktop donut charts found:', donutCharts.length);
+    }
+    
+    // Run test when page loads
+    document.addEventListener('DOMContentLoaded', testChartUpdates);
+  </script>
+</body>
+</html>

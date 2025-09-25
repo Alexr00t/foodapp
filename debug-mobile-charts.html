@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Debug Mobile Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Debug Mobile Charts</h1>
+    
+    <div class="card">
+      <h2>Test Mobile Bar Charts</h2>
+      <p>Verifică dacă mobile bar charts sunt afișate corect.</p>
+      
+      <!-- Test Mobile Bar Charts -->
+      <div class="mobile-bar-chart">
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label" data-label="calories">Cal</div>
+          <div class="mobile-bar-container" id="debug-mobile-bar-cal">
+            <div class="mobile-bar-fill" data-state="under" style="width: 75%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="under" style="width: 25%;"></div>
+          </div>
+          <div class="mobile-bar-value">1500</div>
+          <div class="mobile-bar-percentage">75%</div>
+        </div>
+      </div>
+      
+      <button onclick="testMobileCharts()">Test Mobile Charts</button>
+      <button onclick="testResponsive()">Test Responsive</button>
+      
+      <div id="debug-output"></div>
+    </div>
+  </div>
+  
+  <script>
+    function testMobileCharts() {
+      const output = document.getElementById('debug-output');
+      output.innerHTML = '<h3>Debug Info:</h3>';
+      
+      // Test if mobile bar chart elements exist
+      const mobileBarCal = document.getElementById('debug-mobile-bar-cal');
+      const mobileBarFill = mobileBarCal?.querySelector('.mobile-bar-fill');
+      const mobileBarContribution = mobileBarCal?.querySelector('.mobile-bar-contribution');
+      const mobileBarValue = document.getElementById('debug-mobile-bar-value-cal');
+      const mobileBarPercent = document.getElementById('debug-mobile-bar-percent-cal');
+      
+      output.innerHTML += `
+        <p>Mobile Bar Container: ${mobileBarCal ? '✅ Found' : '❌ Not found'}</p>
+        <p>Mobile Bar Fill: ${mobileBarFill ? '✅ Found' : '❌ Not found'}</p>
+        <p>Mobile Bar Contribution: ${mobileBarContribution ? '✅ Found' : '❌ Not found'}</p>
+        <p>Mobile Bar Value: ${mobileBarValue ? '✅ Found' : '❌ Not found'}</p>
+        <p>Mobile Bar Percent: ${mobileBarPercent ? '✅ Found' : '❌ Not found'}</p>
+      `;
+      
+      // Test CSS classes
+      const mobileBarChart = document.querySelector('.mobile-bar-chart');
+      const computedStyle = window.getComputedStyle(mobileBarChart);
+      
+      output.innerHTML += `
+        <h4>CSS Debug:</h4>
+        <p>Mobile Bar Chart Display: ${computedStyle.display}</p>
+        <p>Mobile Bar Chart Flex Direction: ${computedStyle.flexDirection}</p>
+        <p>Screen Width: ${window.innerWidth}px</p>
+        <p>Is Mobile: ${window.innerWidth <= 768 ? 'Yes' : 'No'}</p>
+      `;
+    }
+    
+    function testResponsive() {
+      const output = document.getElementById('debug-output');
+      output.innerHTML = '<h3>Responsive Test:</h3>';
+      
+      const width = window.innerWidth;
+      let deviceType = 'Desktop';
+      if (width <= 768) deviceType = 'Mobile';
+      else if (width <= 1024) deviceType = 'Tablet';
+      
+      output.innerHTML += `
+        <p>Screen Width: ${width}px</p>
+        <p>Device Type: ${deviceType}</p>
+        <p>Expected Charts: ${width <= 768 ? 'Mobile Bar Charts' : 'Desktop Donut Charts'}</p>
+      `;
+      
+      // Test media queries
+      const mobileBarChart = document.querySelector('.mobile-bar-chart');
+      const desktopDonutChart = document.querySelector('.desktop-donut-chart');
+      
+      if (mobileBarChart) {
+        const mobileStyle = window.getComputedStyle(mobileBarChart);
+        output.innerHTML += `
+          <p>Mobile Bar Chart Display: ${mobileStyle.display}</p>
+          <p>Mobile Bar Chart Visibility: ${mobileStyle.visibility}</p>
+        `;
+      }
+      
+      if (desktopDonutChart) {
+        const desktopStyle = window.getComputedStyle(desktopDonutChart);
+        output.innerHTML += `
+          <p>Desktop Donut Chart Display: ${desktopStyle.display}</p>
+          <p>Desktop Donut Chart Visibility: ${desktopStyle.visibility}</p>
+        `;
+      }
+    }
+    
+    // Auto-test on load
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('Debug page loaded');
+      testMobileCharts();
+    });
+  </script>
+</body>
+</html>

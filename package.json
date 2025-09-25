@@ -1,46 +1,16 @@
 {
-  "name": "foodapp-journal",
-  "version": "1.0.0",
-  "description": "A modern web application for tracking daily calorie and nutrient intake with advanced analysis and visualization features",
+  "name": "foodapp",
+  "version": "1.0.3-dev",
+  "description": "Calorie and Nutrition Tracking App",
   "main": "index.html",
   "scripts": {
-    "start": "python -m http.server 8080",
-    "serve": "npx serve .",
-    "dev": "python -m http.server 8080",
-    "build": "echo 'No build process needed - static files'",
-    "deploy": "echo 'Deploy to GitHub Pages or any static hosting'"
+    "start": "http-server -p 8000 --cors -o",
+    "dev": "http-server -p 8000 --cors -o -c-1"
   },
-  "keywords": [
-    "nutrition",
-    "calories",
-    "health",
-    "tracking",
-    "diet",
-    "fitness",
-    "web-app",
-    "responsive",
-    "charts",
-    "mobile"
-  ],
-  "author": "FoodApp Team",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/username/FoodApp-GitHub.git"
-  },
-  "bugs": {
-    "url": "https://github.com/username/FoodApp-GitHub/issues"
-  },
-  "homepage": "https://username.github.io/FoodApp-GitHub",
   "devDependencies": {
-    "serve": "^14.2.0"
+    "http-server": "^14.1.1"
   },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "keywords": ["calorie", "nutrition", "tracking", "food"],
+  "author": "FoodApp",
+  "license": "MIT"
 }

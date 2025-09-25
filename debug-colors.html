@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Debug Colors - Mobile Bar Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Debug Colors - Mobile Bar Charts</h1>
+    
+    <div class="card">
+      <h2>Test Manual - Verificare Culori</h2>
+      
+      <!-- Test Case 1: Manual setup -->
+      <div class="mobile-bar-chart">
+        <h4>Test Manual: Consum 78% + Produs 4% = 82%</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Cal</div>
+          <div class="mobile-bar-container" id="debug-cal">
+            <div class="mobile-bar-fill" data-state="under" style="width: 156%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="under" style="left: 156%; width: 8%;"></div>
+          </div>
+          <div class="mobile-bar-value">80</div>
+          <div class="mobile-bar-percentage">4%</div>
+          <div class="mobile-bar-daily-percent">78%</div>
+        </div>
+      </div>
+      
+      <!-- Test Case 2: Manual setup -->
+      <div class="mobile-bar-chart">
+        <h4>Test Manual: Consum 95% + Produs 10% = 105%</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Prot</div>
+          <div class="mobile-bar-container" id="debug-pro">
+            <div class="mobile-bar-fill" data-state="under" style="width: 190%;"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="over" style="left: 190%; width: 20%;"></div>
+          </div>
+          <div class="mobile-bar-value">13</div>
+          <div class="mobile-bar-percentage">10%</div>
+          <div class="mobile-bar-daily-percent">95%</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Debug Info</h2>
+      <div id="debug-info">
+        <p>Verifică console-ul pentru debug info</p>
+        <p>Verifică dacă vezi:</p>
+        <ul>
+          <li>Consumul zilnic (verde/roșu) - doar până la consumul zilnic</li>
+          <li>Contribuția produsului (verde2/roșu2) - suprapusă după consumul zilnic</li>
+          <li>Partea neatinsă (gri neutru) - restul barei</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Set target lines at 50% (represents 100% of target)
+    document.addEventListener('DOMContentLoaded', () => {
+      const targetLines = document.querySelectorAll('.mobile-bar-target-line');
+      targetLines.forEach(line => {
+        line.style.left = '50%';
+      });
+      
+      // Debug info
+      console.log('Debug Colors - Mobile Bar Charts');
+      console.log('Test 1: Consum 78% + Produs 4% = 82%');
+      console.log('Test 2: Consum 95% + Produs 10% = 105%');
+    });
+  </script>
+</body>
+</html>

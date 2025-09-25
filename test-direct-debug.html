@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Test Direct Debug - Mobile Bar Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Test Direct Debug - Mobile Bar Charts</h1>
+    
+    <div class="card">
+      <h2>Test Direct - Simulare Date</h2>
+      
+      <div class="mobile-bar-chart">
+        <h4>Test Direct: Consum 78% + Produs 4% = 82%</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Cal</div>
+          <div class="mobile-bar-container" id="test-direct-cal">
+            <div class="mobile-bar-fill" data-state="empty"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="empty"></div>
+          </div>
+          <div class="mobile-bar-value">0</div>
+          <div class="mobile-bar-percentage">0%</div>
+          <div class="mobile-bar-daily-percent">0%</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Debug Info</h2>
+      <div id="debug-output"></div>
+    </div>
+  </div>
+  
+  <script>
+    // Simulare date pentru test
+    const testData = {
+      daily: 1560, // 78% din 2000
+      product: 200, // 10% din 2000 (mai mare pentru a fi vizibil)
+      target: 2000
+    };
+    
+    function testMobileBarChart() {
+      const barContainer = document.getElementById('test-direct-cal');
+      if (!barContainer) return;
+      
+      const barFill = barContainer.querySelector('.mobile-bar-fill');
+      const barContribution = barContainer.querySelector('.mobile-bar-contribution');
+      const barValue = document.getElementById('test-direct-cal').parentElement.querySelector('.mobile-bar-value');
+      const barPercent = document.getElementById('test-direct-cal').parentElement.querySelector('.mobile-bar-percentage');
+      const barDailyPercent = document.getElementById('test-direct-cal').parentElement.querySelector('.mobile-bar-daily-percent');
+      const targetLine = barContainer.querySelector('.mobile-bar-target-line');
+      
+      if (!barFill || !barValue || !barPercent || !barDailyPercent) return;
+      
+      // Calculate ratios
+      const dailyRatio = testData.target > 0 ? testData.daily / testData.target : 0;
+      const productRatio = testData.target > 0 ? testData.product / testData.target : 0;
+      const totalRatio = dailyRatio + productRatio;
+      
+      // Update values
+      barValue.textContent = Math.round(testData.product);
+      barPercent.textContent = `${Math.round(productRatio * 100)}%`;
+      barDailyPercent.textContent = `${Math.round(dailyRatio * 100)}%`;
+      
+      // Position target line at 50% (represents 100% of target)
+      targetLine.style.left = '50%';
+      
+      // Calculate bar widths
+      const dailyWidth = Math.min(dailyRatio * 200, 200);
+      const contributionWidth = Math.min(productRatio * 200, 200);
+      
+      // Update daily consumption bar
+      barFill.style.width = `${dailyWidth}%`;
+      
+      // Update product contribution overlay
+      const contributionStart = dailyWidth;
+      const contributionEnd = Math.min(contributionStart + contributionWidth, 200);
+      barContribution.style.left = `${contributionStart}%`;
+      barContribution.style.width = `${contributionEnd - contributionStart}%`;
+      
+      // Debug: Add temporary styles to make contribution visible
+      // barContribution.style.border = '2px solid yellow';
+      // barContribution.style.boxShadow = '0 0 5px yellow';
+      
+      // Determine states
+      let dailyState = 'empty';
+      if (testData.daily > 0) {
+        if (dailyRatio >= 1) {
+          dailyState = 'over';
+        } else {
+          dailyState = 'under';
+        }
+      }
+      barFill.setAttribute('data-state', dailyState);
+      
+      let contributionState = 'empty';
+      if (testData.product > 0) {
+        if (totalRatio >= 1) {
+          contributionState = 'over';
+        } else {
+          contributionState = 'under';
+        }
+      }
+      barContribution.setAttribute('data-state', contributionState);
+      
+      // Debug output
+      const debugInfo = {
+        dailyRatio,
+        productRatio,
+        totalRatio,
+        dailyWidth,
+        contributionStart,
+        contributionEnd,
+        dailyState,
+        contributionState
+      };
+      
+      console.log('Debug Info:', debugInfo);
+      
+      document.getElementById('debug-output').innerHTML = `
+        <h3>Debug Info:</h3>
+        <pre>${JSON.stringify(debugInfo, null, 2)}</pre>
+      `;
+    }
+    
+    // Run test when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      testMobileBarChart();
+    });
+  </script>
+</body>
+</html>

@@ -290,6 +290,11 @@ function fmt(n){ return (n ?? 0).toLocaleString(undefined,{maximumFractionDigits
 function todayISO(){ const d=new Date(); d.setHours(0,0,0,0); return d.toISOString().slice(0,10); }
 function formatDateUS(iso){ const d=new Date(iso); const mm=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); const yyyy=d.getFullYear(); return `${mm}/${dd}/${yyyy}`; }
 
+// Get all products from both PRODUCTS and MENU_ITEMS
+function getAllProducts() {
+  return [...PRODUCTS, ...MENU_ITEMS];
+}
+
 // --------- Text Normalization and Tagging ---------
 function normalizeText(text) {
   if (!text) return '';
@@ -1474,8 +1479,13 @@ function selectProduct(productName){
     searchInput.dataset.selected = 'true';
   }
   hideProductDropdown();
-  // Focus on slider after product selection (works on all devices)
+  // Set input to readonly and focus on slider after product selection
+  const input = document.getElementById('jr-qty');
   const slider = document.getElementById('jr-qty-slider');
+  if (input) {
+    input.setAttribute('readonly', 'true');
+    input.blur();
+  }
   if (slider) {
     slider.focus();
   }
@@ -1832,31 +1842,11 @@ function dbgChart(label, data){
 function dbgGroupStart(title){ if(DEBUG_MOBILE_CHARTS) { try { console.groupCollapsed(title); } catch(_){} } }
 function dbgGroupEnd(){ if(DEBUG_MOBILE_CHARTS) { try { console.groupEnd(); } catch(_){} } }
 
-function updateMobileBarChart(key, actual, target, productContribution = 0) {
-  dbgGroupStart(`updateMobileBarChart:${key}`);
-  const barContainer = document.getElementById(`jr-mobile-bar-${key}`);
-  if (!barContainer) {
-    dbgChart('container-missing', { key, selector: `#jr-mobile-bar-${key}` });
-    dbgGroupEnd();
-    return;
-  }
-  
-  const barFill = barContainer.querySelector('.mobile-bar-fill');
-  const barOver = barContainer.querySelector('.mobile-bar-over');
-  const barContribution = barContainer.querySelector('.mobile-bar-contribution');
-  const barValue = document.getElementById(`jr-mobile-value-${key}`);
-  const barPercent = document.getElementById(`jr-mobile-percent-${key}`);
-  const targetLine = barContainer.querySelector('.mobile-bar-target-line');
-  
-  if (!barFill || !barOver || !barContribution || !barValue || !barPercent || !targetLine) {
-    dbgChart('sub-elements-missing', {
-      hasBarFill: !!barFill,
-      hasBarOver: !!barOver,
-      hasBarContribution: !!barContribution,
-      hasBarValue: !!barValue,
-      hasBarPercent: !!barPercent,
-      hasTargetLine: !!targetLine
-    });
+function updateMobileDonutChart(key, actual, target, productContribution = 0) {
+  dbgGroupStart(`updateMobileDonutChart:${key}`);
+  const donutContainer = document.getElementById(`jr-mobile-donut-${key}`);
+  if (!donutContainer) {
+    dbgChart('container-missing', { key, selector: `#jr-mobile-donut-${key}` });
     dbgGroupEnd();
     return;
   }
@@ -1867,42 +1857,134 @@ function updateMobileBarChart(key, actual, target, productContribution = 0) {
   
   dbgChart('inputs', { key, actual, target, productContribution, ratio, contributionRatio });
   
-  // Update values
-  barValue.textContent = Math.round(actual);
-  barPercent.textContent = `${percentage}%`;
-  
-  // Calculate bar width (0-200%) so 100% is mid-bar
-  const barWidth = Math.min(ratio * 200, 200);
-  barFill.style.width = `${barWidth}%`;
-  // Over-segment starts at 100% (50% width) and grows for amount exceeding 100%
-  const overWidth = Math.max(barWidth - 100, 0);
-  barOver.style.width = `${overWidth}%`;
-  
-  // Position target line at 50% (represents 100% of target)
-  targetLine.style.left = '50%';
-  
-  // Update product contribution overlay placed after current daily amount
-  const contributionWidth = Math.min(contributionRatio * 200, 200);
-  const contributionStart = Math.min(barWidth, 200);
-  const contributionEnd = Math.min(contributionStart + contributionWidth, 200);
-  barContribution.style.left = `${contributionStart}%`;
-  barContribution.style.width = `${contributionEnd - contributionStart}%`;
-  
-  // Determine main bar state
-  let state = 'empty';
-  if (actual > 0) {
-    state = ratio >= 1 ? 'over' : 'under';
+  // Get the existing canvas element
+  const canvas = donutContainer.querySelector('canvas');
+  if (!canvas) {
+    dbgChart('canvas-missing', { key });
+    dbgGroupEnd();
+    return;
   }
-  barFill.setAttribute('data-state', state);
   
-  // Contribution state color
-  let contributionState = 'empty';
-  if (productContribution > 0) {
-    contributionState = (ratio + contributionRatio) >= 1 ? 'over' : 'under';
+  // Fixed canvas size for mobile - smaller sizes
+  const viewportWidth = window.innerWidth;
+  let canvasSize;
+  
+  if (viewportWidth <= 480) {
+    canvasSize = 20; // Ultra-small screens
+  } else if (viewportWidth <= 768) {
+    canvasSize = 22; // Mobile screens
+  } else {
+    canvasSize = 40; // Tablets (shouldn't reach here as we check for <= 768px)
   }
-  barContribution.setAttribute('data-state', contributionState);
   
-  dbgChart('computed', { barWidth, contributionStart, contributionEnd, state, contributionState });
+  // Set canvas size - CSS will override with !important if needed
+  canvas.width = canvasSize;
+  canvas.height = canvasSize;
+  
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    dbgChart('canvas-missing', { key });
+    dbgGroupEnd();
+    return;
+  }
+  
+  // Destroy existing chart if it exists
+  if (donutContainer.chart) {
+    try {
+      donutContainer.chart.destroy();
+    } catch (e) {
+      console.warn('Error destroying existing chart:', e);
+    }
+    donutContainer.chart = null;
+  }
+  
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // Create new chart with same color logic as desktop
+  let chartData, chartColors;
+  
+  if (ratio > 1) {
+    // Over 100% - show red for overage, green for base 100%
+    const overagePercent = (ratio - 1) * 100;
+    const basePercent = 100;
+    chartData = [overagePercent, basePercent, 0];
+    chartColors = ['#dc2626', '#16a34a', '#6b7280']; // Red, Green, Gray
+  } else {
+    // Under 100% - show green for progress, gray for remaining
+    const progressPercent = ratio * 100;
+    const remainingPercent = 100 - progressPercent;
+    chartData = [progressPercent, remainingPercent];
+    chartColors = ['#16a34a', '#6b7280']; // Green, Gray
+  }
+  
+  const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: chartData,
+        backgroundColor: chartColors,
+        borderWidth: 0,
+        borderAlign: 'inner'
+      }]
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: false,
+      aspectRatio: 1, // Force 1:1 aspect ratio
+      cutout: '70%',
+      rotation: -90, // Start from top
+      circumference: 360,
+      animation: {
+        duration: 0 // Disable animations to prevent skewing during resize
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: false }
+      },
+      elements: {
+        arc: {
+          borderWidth: 0,
+          borderAlign: 'inner'
+        }
+      },
+      layout: {
+        padding: 0
+      },
+      devicePixelRatio: window.devicePixelRatio || 1 // Ensure crisp rendering
+    }
+  });
+  
+  // Store chart reference for cleanup
+  donutContainer.chart = chart;
+  
+  // Add percentage overlay for mobile donuts
+  const percentageOverlay = document.createElement('div');
+  percentageOverlay.className = 'mobile-donut-percentage';
+  percentageOverlay.textContent = `${percentage}%`;
+  percentageOverlay.style.cssText = `
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    z-index: 10;
+    pointer-events: none;
+  `;
+  
+  // Remove existing overlay if it exists
+  const existingOverlay = donutContainer.querySelector('.mobile-donut-percentage');
+  if (existingOverlay) {
+    existingOverlay.remove();
+  }
+  
+  // Add new overlay
+  donutContainer.style.position = 'relative';
+  donutContainer.appendChild(percentageOverlay);
+  
   dbgGroupEnd();
 }
 
@@ -1922,6 +2004,7 @@ function updateAllCharts(totals, productContribution = null) {
     { key: 'pro', target: TARGETS.pro || 0 },
     { key: 'carb', target: TARGETS.carb || 0 },
     { key: 'fat', target: TARGETS.fat || 0 },
+    { key: 'sat', target: TARGETS.sat || 0 },
     { key: 'sug', target: TARGETS.sug || 0 },
     { key: 'fib', target: TARGETS.fib || 0 }
   ];
@@ -1936,9 +2019,9 @@ function updateAllCharts(totals, productContribution = null) {
     //   contribution
     // });
     
-    // Update mobile bar charts (only on mobile)
+    // Update mobile donut charts (only on mobile)
     if (window.innerWidth <= 768) {
-      updateMobileBarChart(nutrient.key, actual, nutrient.target, contribution);
+      updateMobileDonutChart(nutrient.key, actual, nutrient.target, contribution);
     }
     
     // Update desktop donut charts (only on desktop)
@@ -1946,6 +2029,38 @@ function updateAllCharts(totals, productContribution = null) {
       updateDesktopDonutChart(nutrient.key, actual, nutrient.target);
     }
   });
+}
+
+// Add window resize listener to update charts when switching between desktop/mobile
+window.addEventListener('resize', function() {
+  // Debounce the resize event
+  clearTimeout(window.resizeTimeout);
+  window.resizeTimeout = setTimeout(function() {
+    // Get current totals and update charts
+    const currentTotals = getCurrentTotals();
+    if (currentTotals) {
+      updateAllCharts(currentTotals);
+    }
+  }, 250);
+});
+
+// Helper function to get current totals
+function getCurrentTotals() {
+  const tbody = document.getElementById('jr-totals');
+  if (!tbody || !tbody.children.length) return null;
+  
+  const totalsRow = tbody.children[0];
+  if (!totalsRow) return null;
+  
+  return {
+    cal: parseFloat(totalsRow.children[3]?.textContent || 0),
+    fat: parseFloat(totalsRow.children[4]?.textContent || 0),
+    sat: parseFloat(totalsRow.children[5]?.textContent || 0),
+    carb: parseFloat(totalsRow.children[6]?.textContent || 0),
+    sug: parseFloat(totalsRow.children[7]?.textContent || 0),
+    fib: parseFloat(totalsRow.children[8]?.textContent || 0),
+    pro: parseFloat(totalsRow.children[9]?.textContent || 0)
+  };
 }
 
 function renderJournalForDate(dateISO){
@@ -4340,12 +4455,9 @@ function configureQuantitySliderForUnit(unit) {
     const input = document.getElementById('jr-qty');
     if (slider && input) {
       input.value = slider.value;
-      // On mobile, make input readonly when slider is used (to hide keyboard)
-      if (window.innerWidth <= 768) {
-        input.classList.remove('editable');
-        input.setAttribute('readonly', 'true');
-        input.blur();
-      }
+      // Force readonly when slider is used (prevents mobile keyboard)
+      input.setAttribute('readonly', 'true');
+      input.blur();
     }
   });
 
@@ -4357,43 +4469,35 @@ function configureQuantitySliderForUnit(unit) {
     if (initialUnit) configureQuantitySliderForUnit(initialUnit);
   } catch(_){}
   
-  // Mobile: make input readonly by default
-  if (window.innerWidth <= 768) {
-    const input = document.getElementById('jr-qty');
-    if (input) {
-      input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
-    }
+  // Set input to readonly by default (prevents mobile keyboard)
+  const input = document.getElementById('jr-qty');
+  if (input) {
+    input.setAttribute('readonly', 'true');
   }
   
-  // Make input editable when clicked on mobile
-  document.getElementById('jr-qty')?.addEventListener('click', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        // Make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        input.focus();
-      }
+  // Make input editable when clicked
+  document.getElementById('jr-qty')?.addEventListener('click', function() {
+    this.removeAttribute('readonly');
+    this.focus();
+  });
+  
+  // Handle Enter key - make readonly and lose focus
+  document.getElementById('jr-qty')?.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      this.setAttribute('readonly', 'true');
+      this.blur();
     }
   });
   
-  // Make input editable when touched on mobile
-  document.getElementById('jr-qty')?.addEventListener('touchstart', function(event) {
-    if (window.innerWidth <= 768) {
-      const input = document.getElementById('jr-qty');
-      if (input) {
-        // Make editable
-        input.removeAttribute('readonly');
-        input.classList.add('editable');
-        // Small delay to ensure focus works
-        setTimeout(() => {
-          input.focus();
-        }, 50);
-      }
-    }
-  }, { passive: true });
+  // Handle input changes - keep focus while typing
+  document.getElementById('jr-qty')?.addEventListener('input', function() {
+    updateMobileBarChartsWithQuantity();
+  });
+  
+  // Handle blur - make readonly when focus is lost
+  document.getElementById('jr-qty')?.addEventListener('blur', function() {
+    this.setAttribute('readonly', 'true');
+  });
   
   // Show current folder information
   showCurrentFolderInfo();
@@ -4630,13 +4734,21 @@ async function forceLoadFromJSON(){
   console.log('🧹 Cleared localStorage');
   
   // Reload data from JSON files
+  console.log('📥 Starting to load JSON files...');
   const p = await tryLoadJSON('products');
+  console.log('📥 Products loaded:', p);
   const j = await tryLoadJSON('journal');
+  console.log('📥 Journal loaded:', j);
   const t = await tryLoadJSON('targets');
+  console.log('📥 Targets loaded:', t);
   const r = await tryLoadJSON('restaurants');
+  console.log('📥 Restaurants loaded:', r);
   const c = await tryLoadJSON('categories');
+  console.log('📥 Categories loaded:', c);
   const m = await tryLoadJSON('menu_items');
+  console.log('📥 Menu items loaded:', m);
   const tax = await tryLoadJSON('taxonomy');
+  console.log('📥 Taxonomy loaded:', tax);
   
   console.log('📊 Loaded files:', { products: p, journal: j, targets: t, restaurants: r, categories: c, menu_items: m, taxonomy: tax });
   
@@ -4706,6 +4818,9 @@ function updateProductDonutCharts(product) {
   
   // Update mobile bar charts for product details
   updateProductMobileBarCharts(product);
+  
+  // Update desktop bar charts for product details
+  updateProductDesktopBarCharts(product);
 }
 
 function updateProductMobileBarCharts(product) {
@@ -4738,11 +4853,12 @@ function updateProductMobileBarCharts(product) {
   
   const nutrients = [
     { key: 'cal', target: targets.cal || 2000, current: product.cal || 0, daily: dailyTotals.cal },
-    { key: 'pro', target: targets.pro || 130, current: product.pro || 0, daily: dailyTotals.pro },
-    { key: 'carb', target: targets.carb || 260, current: product.carb || 0, daily: dailyTotals.carb },
     { key: 'fat', target: targets.fat || 70, current: product.fat || 0, daily: dailyTotals.fat },
+    { key: 'sat', target: targets.sat || 20, current: product.sat || 0, daily: dailyTotals.sat },
+    { key: 'carb', target: targets.carb || 260, current: product.carb || 0, daily: dailyTotals.carb },
     { key: 'sug', target: targets.sug || 50, current: product.sug || 0, daily: dailyTotals.sug },
-    { key: 'fib', target: targets.fib || 30, current: product.fib || 0, daily: dailyTotals.fib }
+    { key: 'fib', target: targets.fib || 30, current: product.fib || 0, daily: dailyTotals.fib },
+    { key: 'pro', target: targets.pro || 130, current: product.pro || 0, daily: dailyTotals.pro }
   ];
   
   nutrients.forEach(nutrient => {
@@ -4874,15 +4990,176 @@ function updateProductMobileBarCharts(product) {
   
   dbgGroupEnd(); // End updateProductMobileBarCharts
   
-  // On mobile, make input readonly when product is selected (to hide keyboard)
-  if (window.innerWidth <= 768) {
-    const input = document.getElementById('jr-qty');
-    if (input) {
-      input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
-      input.blur();
-    }
+  // Don't interfere with input state - let user control interaction
+}
+
+function updateProductDesktopBarCharts(product) {
+  dbgGroupStart('updateProductDesktopBarCharts');
+  dbgChart('product-input', product);
+  
+  const targets = loadTargets();
+  dbgChart('targets', targets);
+  
+  // Get current daily totals
+  const currentDate = document.getElementById('jr-date')?.value;
+  let dailyTotals = { cal: 0, fat: 0, sat: 0, carb: 0, sug: 0, fib: 0, pro: 0 };
+  dbgChart('currentDate', currentDate);
+  
+  if (currentDate) {
+    const rows = JOURNAL.filter(x => x.date === currentDate);
+    dbgChart('journal-rows-count', rows.length);
+    rows.forEach((r) => {
+      const n = calcNutrients(r) || { cal: 0, fat: 0, sat: 0, carb: 0, sug: 0, fib: 0, pro: 0 };
+      dailyTotals.cal += n.cal;
+      dailyTotals.fat += n.fat;
+      dailyTotals.sat += n.sat;
+      dailyTotals.carb += n.carb;
+      dailyTotals.sug += n.sug;
+      dailyTotals.fib += n.fib;
+      dailyTotals.pro += n.pro;
+    });
   }
+  dbgChart('dailyTotals', dailyTotals);
+  
+  const nutrients = [
+    { key: 'cal', target: targets.cal || 2000, current: product.cal || 0, daily: dailyTotals.cal },
+    { key: 'fat', target: targets.fat || 70, current: product.fat || 0, daily: dailyTotals.fat },
+    { key: 'sat', target: targets.sat || 20, current: product.sat || 0, daily: dailyTotals.sat },
+    { key: 'carb', target: targets.carb || 260, current: product.carb || 0, daily: dailyTotals.carb },
+    { key: 'sug', target: targets.sug || 50, current: product.sug || 0, daily: dailyTotals.sug },
+    { key: 'fib', target: targets.fib || 30, current: product.fib || 0, daily: dailyTotals.fib },
+    { key: 'pro', target: targets.pro || 130, current: product.pro || 0, daily: dailyTotals.pro }
+  ];
+  
+  nutrients.forEach(nutrient => {
+    dbgGroupStart(`product-nutrient-${nutrient.key}`);
+    
+    const barContainer = document.getElementById(`jr-product-desktop-bar-${nutrient.key}`);
+    if (!barContainer) {
+      dbgChart('container-missing', `#jr-product-desktop-bar-${nutrient.key}`);
+      dbgGroupEnd();
+      return;
+    }
+    
+    const barFill = barContainer.querySelector('.desktop-bar-fill');
+    const barOver = barContainer.querySelector('.desktop-bar-over');
+    const barContribution = barContainer.querySelector('.desktop-bar-contribution');
+    const barValue = document.getElementById(`jr-product-desktop-value-${nutrient.key}`);
+    const barPercent = document.getElementById(`jr-product-desktop-percent-${nutrient.key}`);
+    const barDailyPercent = document.getElementById(`jr-product-desktop-daily-percent-${nutrient.key}`);
+    const targetLine = barContainer.querySelector('.desktop-bar-target-line');
+    
+    if (!barFill || !barOver || !barValue || !barPercent || !barDailyPercent) {
+      dbgChart('elements-missing', {
+        hasBarFill: !!barFill,
+        hasBarOver: !!barOver,
+        hasBarContribution: !!barContribution,
+        hasBarValue: !!barValue,
+        hasBarPercent: !!barPercent,
+        hasBarDailyPercent: !!barDailyPercent,
+        hasTargetLine: !!targetLine
+      });
+      dbgGroupEnd();
+      return;
+    }
+    
+    // Calculate ratios
+    const dailyRatio = nutrient.target > 0 ? nutrient.daily / nutrient.target : 0;
+    const productRatio = nutrient.target > 0 ? nutrient.current / nutrient.target : 0;
+    const totalRatio = dailyRatio + productRatio;
+    
+    dbgChart('ratios', {
+      nutrient: nutrient.key,
+      daily: nutrient.daily,
+      current: nutrient.current,
+      target: nutrient.target,
+      dailyRatio,
+      productRatio,
+      totalRatio
+    });
+    
+    // Update values - show product contribution and total percentage (daily + product)
+    barValue.textContent = Math.round(nutrient.current);
+    barPercent.textContent = `(${Math.round(productRatio * 100)}%)`;
+    barDailyPercent.textContent = `${Math.round(totalRatio * 100)}%`; // Show total percentage
+    
+    // Apply red color if total percentage > 100%
+    if (totalRatio > 1.0) {
+      barDailyPercent.classList.add('over-target');
+    } else {
+      barDailyPercent.classList.remove('over-target');
+    }
+    
+    // Position target line at 50% (represents 100% of target)
+    targetLine.style.left = '50%';
+    
+    // Calculate bar widths (0-200% scaling, 100% = 50% width)
+    const dailyWidth = Math.min(dailyRatio * 50, 100); // Max 200% = 100% of bar width
+    const contributionWidth = Math.min(productRatio * 50, 100); // Max 200% = 100% of bar width
+    
+    // Daily consumption: green up to 100%, red for over-target
+    // Account for 4px target line width (2px on each side of center)
+    const targetLineWidth = 2; // Half of 4px target line
+    const greenWidth = Math.min(dailyWidth, 50 - targetLineWidth); // Green up to target line center
+    const redWidth = Math.max(dailyWidth - (50 + targetLineWidth), 0); // Red after target line center
+    
+    // Set green segment (up to target line center)
+    barFill.style.width = `${greenWidth}%`;
+    
+    // Red segment: only show if there's over-target consumption
+    if (redWidth > 0) {
+      barOver.style.display = 'block';
+      barOver.style.left = `${50 + targetLineWidth}%`; // Start after target line center
+      barOver.style.width = `${redWidth}%`;
+    } else {
+      barOver.style.display = 'none';
+    }
+    
+    // Green segment: always "under" (green color)
+    barFill.setAttribute('data-state', 'under');
+    
+    // Update product contribution overlay - positioned after daily consumption
+    // If daily consumption is at max (200%), align contribution to the right
+    const maxDailyWidth = 100; // 200% of target = 100% of bar width
+    const contributionStart = Math.min(dailyWidth, maxDailyWidth);
+    const contributionEnd = Math.min(contributionStart + contributionWidth, maxDailyWidth);
+    
+    // If daily is at max and contribution would exceed, align to right
+    if (dailyWidth >= maxDailyWidth && contributionWidth > 0) {
+      const availableWidth = contributionWidth;
+      barContribution.style.left = `${maxDailyWidth - availableWidth}%`;
+      barContribution.style.width = `${availableWidth}%`;
+    } else {
+      barContribution.style.left = `${contributionStart}%`;
+      barContribution.style.width = `${contributionEnd - contributionStart}%`;
+    }
+    
+    // Determine contribution state based on where the contribution falls
+    let contributionState = 'empty';
+    if (nutrient.current > 0) {
+      // Check if contribution starts in the red zone (after 100% of target)
+      const contributionStartRatio = dailyRatio; // Where contribution starts
+      contributionState = contributionStartRatio >= 1 ? 'over' : 'under';
+    }
+    barContribution.setAttribute('data-state', contributionState);
+    
+    dbgChart('computed-widths', {
+      nutrient: nutrient.key,
+      dailyWidth,
+      greenWidth,
+      redWidth,
+      contributionStart,
+      contributionEnd,
+      contributionWidth: contributionEnd - contributionStart,
+      contributionState
+    });
+    
+    dbgGroupEnd();
+  });
+  
+  dbgGroupEnd(); // End updateProductDesktopBarCharts
+  
+  // Don't interfere with input state - let user control interaction
 }
 
 // Update mobile bar charts with current quantity input
@@ -4920,15 +5197,19 @@ function updateMobileBarChartsWithQuantity() {
   const scaledProduct = {
     ...product,
     cal: nutrients.cal,
-    pro: nutrients.pro,
-    carb: nutrients.carb,
     fat: nutrients.fat,
+    sat: nutrients.sat,
+    carb: nutrients.carb,
     sug: nutrients.sug,
-    fib: nutrients.fib
+    fib: nutrients.fib,
+    pro: nutrients.pro
   };
   
   // Update mobile bar charts with scaled product
   updateProductMobileBarCharts(scaledProduct);
+  
+  // Update desktop bar charts with scaled product
+  updateProductDesktopBarCharts(scaledProduct);
 }
 
 function updateMobileBarChartsWithSlider() {
@@ -4948,12 +5229,7 @@ function updateMobileBarChartsWithSlider() {
   const input = document.getElementById('jr-qty');
   if (input) {
     input.value = quantity;
-    // On mobile, make input readonly when slider is used (to hide keyboard)
-    if (window.innerWidth <= 768) {
-      input.classList.remove('editable');
-      input.setAttribute('readonly', 'true');
-      input.blur();
-    }
+    // Don't interfere with input focus - let user control it
   }
   
   // Create a temporary entry to calculate nutrients with the current quantity
@@ -4970,13 +5246,24 @@ function updateMobileBarChartsWithSlider() {
   const scaledProduct = {
     ...product,
     cal: nutrients.cal,
-    pro: nutrients.pro,
-    carb: nutrients.carb,
     fat: nutrients.fat,
+    sat: nutrients.sat,
+    carb: nutrients.carb,
     sug: nutrients.sug,
-    fib: nutrients.fib
+    fib: nutrients.fib,
+    pro: nutrients.pro
   };
   
   // Update mobile bar charts with scaled product
   updateProductMobileBarCharts(scaledProduct);
+  
+  // Update desktop bar charts with scaled product
+  updateProductDesktopBarCharts(scaledProduct);
 }
+
+// Function to get all products (combines PRODUCTS and MENU_ITEMS)
+function getAllProducts() {
+  return [...PRODUCTS, ...MENU_ITEMS];
+}
+
+// End of file

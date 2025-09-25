@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Debug Step by Step - Mobile Bar Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Debug Step by Step - Mobile Bar Charts</h1>
+    
+    <div class="card">
+      <h2>Test cu valorile din imagine</h2>
+      
+      <!-- Test Case: Cal - 109, 5%, 52% -->
+      <div class="mobile-bar-chart">
+        <h4>Cal: 109, 5%, 52% (verde + verde2)</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Cal</div>
+          <div class="mobile-bar-container" id="debug-cal">
+            <div class="mobile-bar-fill" data-state="empty"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="empty"></div>
+          </div>
+          <div class="mobile-bar-value">109</div>
+          <div class="mobile-bar-percentage">5%</div>
+          <div class="mobile-bar-daily-percent">52%</div>
+        </div>
+      </div>
+      
+      <!-- Test Case: Zah - 0, 0%, 200% -->
+      <div class="mobile-bar-chart">
+        <h4>Zah: 0, 0%, 200% (roșu + roșu2)</h4>
+        <div class="mobile-bar-item">
+          <div class="mobile-bar-label">Zah</div>
+          <div class="mobile-bar-container" id="debug-zah">
+            <div class="mobile-bar-fill" data-state="empty"></div>
+            <div class="mobile-bar-target-line"></div>
+            <div class="mobile-bar-contribution" data-state="empty"></div>
+          </div>
+          <div class="mobile-bar-value">0</div>
+          <div class="mobile-bar-percentage">0%</div>
+          <div class="mobile-bar-daily-percent">200%</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2>Debug Info</h2>
+      <div id="debug-output"></div>
+    </div>
+  </div>
+  
+  <script>
+    function debugStepByStep() {
+      // Test Case 1: Cal - 109, 5%, 52%
+      const calData = {
+        daily: 1040, // 52% din 2000
+        product: 109, // 5% din 2000
+        target: 2000
+      };
+      
+      // Test Case 2: Zah - 0, 0%, 200%
+      const zahData = {
+        daily: 100, // 200% din 50
+        product: 0, // 0% din 50
+        target: 50
+      };
+      
+      // Debug Cal
+      console.log('=== DEBUG CAL ===');
+      const calDailyRatio = calData.target > 0 ? calData.daily / calData.target : 0;
+      const calProductRatio = calData.target > 0 ? calData.product / calData.target : 0;
+      const calTotalRatio = calDailyRatio + calProductRatio;
+      
+      console.log('Cal Data:', calData);
+      console.log('Cal Daily Ratio:', calDailyRatio);
+      console.log('Cal Product Ratio:', calProductRatio);
+      console.log('Cal Total Ratio:', calTotalRatio);
+      
+      // Debug Zah
+      console.log('=== DEBUG ZAH ===');
+      const zahDailyRatio = zahData.target > 0 ? zahData.daily / zahData.target : 0;
+      const zahProductRatio = zahData.target > 0 ? zahData.product / zahData.target : 0;
+      const zahTotalRatio = zahDailyRatio + zahProductRatio;
+      
+      console.log('Zah Data:', zahData);
+      console.log('Zah Daily Ratio:', zahDailyRatio);
+      console.log('Zah Product Ratio:', zahProductRatio);
+      console.log('Zah Total Ratio:', zahTotalRatio);
+      
+      // Update Cal bar
+      updateDebugBar('debug-cal', calData);
+      
+      // Update Zah bar
+      updateDebugBar('debug-zah', zahData);
+      
+      // Display debug info
+      document.getElementById('debug-output').innerHTML = `
+        <h3>Debug Info:</h3>
+        <h4>Cal (109, 5%, 52%):</h4>
+        <pre>Daily: ${calData.daily}, Product: ${calData.product}, Target: ${calData.target}
+Daily Ratio: ${calDailyRatio.toFixed(3)}
+Product Ratio: ${calProductRatio.toFixed(3)}
+Total Ratio: ${calTotalRatio.toFixed(3)}</pre>
+        
+        <h4>Zah (0, 0%, 200%):</h4>
+        <pre>Daily: ${zahData.daily}, Product: ${zahData.product}, Target: ${zahData.target}
+Daily Ratio: ${zahDailyRatio.toFixed(3)}
+Product Ratio: ${zahProductRatio.toFixed(3)}
+Total Ratio: ${zahTotalRatio.toFixed(3)}</pre>
+      `;
+    }
+    
+    function updateDebugBar(containerId, data) {
+      const barContainer = document.getElementById(containerId);
+      if (!barContainer) return;
+      
+      const barFill = barContainer.querySelector('.mobile-bar-fill');
+      const barContribution = barContainer.querySelector('.mobile-bar-contribution');
+      const targetLine = barContainer.querySelector('.mobile-bar-target-line');
+      
+      // Calculate ratios
+      const dailyRatio = data.target > 0 ? data.daily / data.target : 0;
+      const productRatio = data.target > 0 ? data.product / data.target : 0;
+      const totalRatio = dailyRatio + productRatio;
+      
+      // Position target line at 50% (represents 100% of target)
+      targetLine.style.left = '50%';
+      
+      // Calculate bar widths
+      const dailyWidth = Math.min(dailyRatio * 200, 200);
+      const contributionWidth = Math.min(productRatio * 200, 200);
+      
+      // Update daily consumption bar
+      barFill.style.width = `${dailyWidth}%`;
+      
+      // Update product contribution overlay
+      const contributionStart = dailyWidth;
+      const contributionEnd = Math.min(contributionStart + contributionWidth, 200);
+      barContribution.style.left = `${contributionStart}%`;
+      barContribution.style.width = `${contributionEnd - contributionStart}%`;
+      
+      // Determine states
+      let dailyState = 'empty';
+      if (data.daily > 0) {
+        if (dailyRatio >= 1) {
+          dailyState = 'over';
+        } else {
+          dailyState = 'under';
+        }
+      }
+      barFill.setAttribute('data-state', dailyState);
+      
+      let contributionState = 'empty';
+      if (data.product > 0) {
+        if (totalRatio >= 1) {
+          contributionState = 'over';
+        } else {
+          contributionState = 'under';
+        }
+      }
+      barContribution.setAttribute('data-state', contributionState);
+      
+      console.log(`${containerId} - Daily: ${dailyWidth}%, Contribution: ${contributionStart}%-${contributionEnd}%`);
+    }
+    
+    // Run debug when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      debugStepByStep();
+    });
+  </script>
+</body>
+</html>

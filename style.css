@@ -207,6 +207,33 @@ tbody tr td:last-child{border-right:1px solid var(--border);border-top-right-rad
 .table-fixed th:nth-child(10), .table-scrollable th:nth-child(10) { width: 8%; } /* Proteine */
 .table-fixed th:nth-child(11), .table-scrollable th:nth-child(11) { width: 10%; } /* Acțiuni */
 
+/* Desktop donut charts - PERFECT alignment with table columns */
+.desktop-donut-row td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px 4px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.desktop-donut-row .donut-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fixed size donuts for all columns - perfect centering */
+.desktop-donut-row .donut {
+  width: 42px !important;
+  height: 42px !important;
+  flex-shrink: 0;
+  margin: 0;
+}
+
 /* Perfect alignment - sync padding between headers and content */
 .table-fixed thead th, .table-scrollable thead th {
   padding: 6px 8px !important;
@@ -266,10 +293,21 @@ tbody tr td:last-child{border-right:1px solid var(--border);border-top-right-rad
 
 
 /* Donut mini charts under totals */
-tbody.pies td{background:var(--headerbg);border:none;padding:8px}
+tbody.pies td{
+  background:var(--headerbg);
+  border:none;
+  padding:8px;
+  text-align:center;
+  vertical-align:middle;
+}
 .donut{
-  position:relative;width:48px;height:48px;border-radius:50%;
-  display:inline-grid;place-items:center;background:var(--headerbg);
+  position:relative;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:inline-grid;
+  place-items:center;
+  background:var(--headerbg);
   --accent:#10b981;
   --over-color:#ef4444;
   --ring-track:rgba(255,255,255,0.12);
@@ -1239,17 +1277,174 @@ textarea {
 
 /* Hide/show charts based on screen size */
 @media (max-width: 768px) {
-  .desktop-donut-chart {
+  .desktop-donut-row {
     display: none !important;
   }
   
-  .mobile-bar-chart {
-    display: flex !important;
+  .mobile-donut-chart {
+    display: table-row !important;
   }
   
-  /* Force mobile bar chart visibility */
-  .mobile-bar-chart .mobile-bar-chart {
-    display: flex !important;
+  .mobile-donut-chart td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 4px 2px;
+    box-sizing: border-box;
+  }
+  
+  /* First three cells - empty spacers */
+  .mobile-donut-chart td:nth-child(1) {
+    padding: 0;
+  }
+  
+  .mobile-donut-chart td:nth-child(2) {
+    /* Match the 8% width */
+    padding: 0;
+  }
+  
+  .mobile-donut-chart td:nth-child(3) {
+    /* Match the 6% width */
+    padding: 0;
+  }
+  
+  /* Canvas cells - ensure proper alignment */
+  .mobile-donut-chart td:nth-child(4),  /* Cal - 8% */
+  .mobile-donut-chart td:nth-child(5),  /* Fat - 7% */
+  .mobile-donut-chart td:nth-child(6),  /* Sat - 7% */
+  .mobile-donut-chart td:nth-child(7),  /* Carb - 8% */
+  .mobile-donut-chart td:nth-child(8),  /* Sug - 7% */
+  .mobile-donut-chart td:nth-child(9),  /* Fib - 6% */
+  .mobile-donut-chart td:nth-child(10) { /* Pro - 8% */
+    padding: 4px 1px;
+  }
+  
+  /* Fixed canvas sizing for mobile - smaller 22px */
+  .mobile-donut-chart canvas {
+    width: 22px !important;
+    height: 22px !important;
+    display: block;
+    margin: 0 auto;
+    border-radius: 50%;
+  }
+  
+  /* Mobile donut percentage overlay */
+  .mobile-donut-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8px;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  /* Mobile - column borders visible, 10px fonts */
+  thead th{
+    font-size:10px;
+    padding:4px 2px;
+    border-right:1px solid rgba(255,255,255,0.15) !important;
+  }
+  thead th:first-child{
+    padding:4px 6px;
+  }
+  thead th:last-child{
+    border-right:none !important;
+  }
+  
+  tbody td{
+    font-size:10px;
+    padding:5px 3px;
+    border-right:1px solid rgba(255,255,255,0.1) !important;
+  }
+  tbody td:first-child{
+    padding:5px 6px;
+    border-left:1px solid var(--border) !important;
+  }
+  tbody td:last-child{
+    border-right:1px solid var(--border) !important;
+  }
+  
+  .table-fixed thead th{
+    font-size:10px !important;
+    padding:4px 2px !important;
+    border-right:1px solid rgba(255,255,255,0.15) !important;
+  }
+  .table-fixed thead th:first-child{
+    padding:4px 6px !important;
+  }
+  .table-fixed thead th:last-child{
+    border-right:none !important;
+  }
+  
+  .table-fixed tbody.totals tr td{
+    font-size:10px !important;
+    padding:5px 3px !important;
+    border-right:1px solid rgba(255,255,255,0.1) !important;
+  }
+  .table-fixed tbody.totals tr td:first-child{
+    padding:5px 6px !important;
+    border-left:1px solid var(--border) !important;
+  }
+  .table-fixed tbody.totals tr td:last-child{
+    border-right:1px solid var(--border) !important;
+  }
+  
+  .table-scrollable thead th{
+    font-size:10px !important;
+    padding:4px 2px !important;
+    border-right:1px solid rgba(255,255,255,0.15) !important;
+  }
+  .table-scrollable thead th:first-child{
+    padding:4px 6px !important;
+  }
+  .table-scrollable thead th:last-child{
+    border-right:none !important;
+  }
+  
+  .table-scrollable tbody td{
+    font-size:10px !important;
+    padding:5px 3px !important;
+    border-right:1px solid rgba(255,255,255,0.1) !important;
+  }
+  .table-scrollable tbody td:first-child{
+    padding:5px 6px !important;
+    border-left:1px solid var(--border) !important;
+  }
+  .table-scrollable tbody td:last-child{
+    border-right:1px solid var(--border) !important;
+  }
+  
+  /* Mobile donut borders - perfect alignment */
+  tbody.pies td{
+    border-right:1px solid rgba(255,255,255,0.1) !important;
+    padding:5px 3px !important;
+    box-sizing:border-box !important;
+  }
+  tbody.pies td:first-child{
+    border-left:1px solid var(--border) !important;
+    padding:5px 6px !important;
+  }
+  tbody.pies td:last-child{
+    border-right:1px solid var(--border) !important;
+  }
+}
+
+/* Ultra-small mobile screens */
+@media (max-width: 480px) {
+  .mobile-donut-chart canvas {
+    width: 20px !important;
+    height: 20px !important;
+  }
+  
+  .mobile-donut-chart td {
+    padding: 2px 1px;
+  }
+  
+  .mobile-donut-percentage {
+    font-size: 7px;
   }
 }
 
@@ -1263,6 +1458,159 @@ textarea {
   border: 1px solid var(--border);
 }
 
+/* Product details desktop bar charts */
+.product-desktop-charts {
+  display: none;
+  margin-top: 16px;
+  padding: 12px;
+  background: var(--headerbg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* Desktop bar chart container */
+.desktop-bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.desktop-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.desktop-bar-product-values {
+  display: flex;
+  gap: 4px;
+  min-width: 80px;
+  flex-shrink: 0;
+  align-items: baseline;
+}
+
+.desktop-bar-label {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.desktop-bar-container {
+  flex: 1;
+  height: 24px;
+  background: #6b7280; /* Neutral gray for untouched area */
+  border-radius: 0; /* Straight bars */
+  position: relative;
+  overflow: visible; /* Allow contribution to extend outside */
+  border: 1px solid var(--border);
+  margin: 4px 0; /* Add margin to accommodate extended contribution */
+}
+
+.desktop-bar-fill {
+  height: 100%;
+  border-radius: 0; /* Straight bars */
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+/* Over-target (100%..200%) base segment rendered in red starting at 50% */
+.desktop-bar-over {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 0%; /* Will be set dynamically by JavaScript */
+  width: 0%;
+  border-radius: 0; /* Straight bars */
+  background: #dc2626; /* Solid red */
+  z-index: 1;
+  display: none; /* Hidden by default, shown only when needed */
+}
+
+.desktop-bar-fill[data-state="under"] {
+  background: #16a34a; /* Solid green */
+}
+
+.desktop-bar-fill[data-state="over"] {
+  background: #dc2626; /* Solid red */
+}
+
+.desktop-bar-fill[data-state="hit"] {
+  background: linear-gradient(90deg, var(--accent) 0%, #16a34a 100%);
+}
+
+.desktop-bar-fill[data-state="empty"] {
+  background: var(--ring-track);
+}
+
+.desktop-bar-target-line {
+  position: absolute;
+  top: -6px; /* Extend more above bar */
+  bottom: -6px; /* Extend more below bar */
+  width: 4px; /* Make it wider */
+  background: #6b7280; /* Same gray as bar background */
+  border-radius: 0; /* Straight edges */
+  z-index: 0; /* Behind all bars and content */
+  border: none; /* No border */
+}
+
+.desktop-bar-value {
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.desktop-bar-percentage {
+  font-size: 13px;
+  color: var(--muted);
+  flex-shrink: 0;
+  font-weight: 400;
+}
+
+.desktop-bar-daily-percent {
+  font-size: 14px;
+  color: #ffffff;
+  min-width: 30px;
+  text-align: center;
+  flex-shrink: 0;
+  font-weight: 600;
+  position: absolute;
+  top: 50%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.desktop-bar-daily-percent.over-target {
+  color: #ffffff; /* White even when > 100% */
+}
+
+/* Product contribution overlay for desktop bars */
+.desktop-bar-contribution {
+  position: absolute;
+  top: -4px; /* Extend 4px above */
+  height: calc(100% + 8px); /* Extend 8px total (4px up + 4px down) */
+  border-radius: 0; /* Straight bars */
+  opacity: 1; /* Full opacity for better visibility */
+  z-index: 3;
+  border: none; /* No border */
+}
+
+.desktop-bar-contribution[data-state="under"] {
+  background: #37ff08; /* Bright green */
+}
+
+.desktop-bar-contribution[data-state="over"] {
+  background: #dc2626; /* Red when in red zone (over 100%) */
+}
+
 /* Hide/show charts based on screen size */
 @media (max-width: 768px) {
   .desktop-donut-chart {
@@ -1273,8 +1621,23 @@ textarea {
     display: flex !important;
   }
   
+  .product-desktop-charts {
+    display: none !important;
+  }
+  
   .nutrition-list.desktop-donut-chart {
     display: none !important;
+  }
+}
+
+/* Media query for desktop visibility */
+@media (min-width: 769px) {
+  .mobile-donut-chart {
+    display: none !important;
+  }
+
+  .desktop-donut-row {
+    display: table-row;
   }
 }
 
@@ -1283,8 +1646,12 @@ textarea {
     display: none !important;
   }
   
+  .product-desktop-charts {
+    display: flex !important;
+  }
+  
   .nutrition-list.desktop-donut-chart {
-    display: block !important;
+    display: none !important;
   }
 }
 
