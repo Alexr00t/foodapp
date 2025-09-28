@@ -6773,5 +6773,29 @@
     "isActive": true,
     "createdAt": "2025-09-21T19:03:45.970Z",
     "updatedAt": "2025-09-21T19:03:45.970Z"
+  },
+  {
+    "id": "mi_1758987093378_tdqz63kq5",
+    "name": "Saint Honoré Mita Biciclista",
+    "description": "Saint Honoré Mita Biciclista",
+    "restaurantId": "default",
+    "categoryId": "general",
+    "base": "100g",
+    "gPerPiece": 100,
+    "mlPerPiece": null,
+    "cal": 365,
+    "fat": 26,
+    "sat": 16,
+    "carb": 29,
+    "sug": 21,
+    "fib": 0,
+    "pro": 4,
+    "glu": 29,
+    "tags": [
+      "fibre"
+    ],
+    "isActive": true,
+    "createdAt": "2025-09-27T15:31:33.378Z",
+    "updatedAt": "2025-09-27T15:31:33.378Z"
   }
 ]

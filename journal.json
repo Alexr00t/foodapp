@@ -1,5 +1,245 @@
 [
   {
+    "id": "e1759053597190vtp3",
+    "ts": 1759053597190,
+    "date": "2025-09-28",
+    "product": "Gullón Biscuiți pentru ceai (un biscuițel ~6,5 g)",
+    "qty": 4,
+    "unit": "buc"
+  },
+  {
+    "id": "e1759053584192rk41",
+    "ts": 1759053584192,
+    "date": "2025-09-28",
+    "product": "Cacao pudră Barry Callebaut (100g)",
+    "qty": 10,
+    "unit": "g"
+  },
+  {
+    "id": "e1759053575267fxgp",
+    "ts": 1759053575267,
+    "date": "2025-09-28",
+    "product": "Miez nuca (100g)",
+    "qty": 30,
+    "unit": "g"
+  },
+  {
+    "id": "e17590535632371ztk",
+    "ts": 1759053563237,
+    "date": "2025-09-28",
+    "product": "Ovaz fulgi Solaris (100g)",
+    "qty": 110,
+    "unit": "g"
+  },
+  {
+    "id": "e1759053537152s9o2",
+    "ts": 1759053537152,
+    "date": "2025-09-28",
+    "product": "Lapte Almond Drink Nature's Promise 1L (100ml)",
+    "qty": 110,
+    "unit": "ml"
+  },
+  {
+    "id": "e17590535264721d0e",
+    "ts": 1759053526472,
+    "date": "2025-09-28",
+    "product": "ON Gold Standard Whey (1 scoop)",
+    "qty": 1,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758996551812doau",
+    "ts": 1758996551812,
+    "date": "2025-09-27",
+    "product": "Rice Cakes Nature's Promise Bio (100g)",
+    "qty": 12.6,
+    "unit": "g"
+  },
+  {
+    "id": "e1758996350031vz96",
+    "ts": 1758996350031,
+    "date": "2025-09-27",
+    "product": "Rice Cakes Nature's Promise Bio (100g)",
+    "qty": 12.6,
+    "unit": "g"
+  },
+  {
+    "id": "e1758988025706jarr",
+    "ts": 1758988025706,
+    "date": "2025-09-27",
+    "product": "Saint Honoré Mita Biciclista",
+    "qty": 40,
+    "unit": "g"
+  },
+  {
+    "id": "e1758986534369d9q5",
+    "ts": 1758986534369,
+    "date": "2025-09-27",
+    "product": "Paine cu maia (100g)",
+    "qty": 100,
+    "unit": "g"
+  },
+  {
+    "id": "e1758986517554o8wd",
+    "ts": 1758986517554,
+    "date": "2025-09-27",
+    "product": "Olympus Iaurt grecesc de băut 2%",
+    "qty": 330,
+    "unit": "ml"
+  },
+  {
+    "id": "e1758986496899zv9g",
+    "ts": 1758986496900,
+    "date": "2025-09-27",
+    "product": "Centrale Pizza - Gloria (1 pizza întreagă)",
+    "qty": 1,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758983147374vz3l",
+    "ts": 1758983147374,
+    "date": "2025-09-27",
+    "product": "Paine cu maia (100g)",
+    "qty": 50,
+    "unit": "g"
+  },
+  {
+    "id": "e1758971862293qj4m",
+    "ts": 1758971862293,
+    "date": "2025-09-27",
+    "product": "Gullón Biscuiți pentru ceai (un biscuițel ~6,5 g)",
+    "qty": 4,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758971851959ogmn",
+    "ts": 1758971851959,
+    "date": "2025-09-27",
+    "product": "Ovaz fulgi Solaris (100g)",
+    "qty": 80,
+    "unit": "g"
+  },
+  {
+    "id": "e1758971830463dyh5",
+    "ts": 1758971830463,
+    "date": "2025-09-27",
+    "product": "ON Gold Standard Whey (1 scoop)",
+    "qty": 1,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758971822475hih1",
+    "ts": 1758971822475,
+    "date": "2025-09-27",
+    "product": "Cacao pudră Barry Callebaut (100g)",
+    "qty": 10,
+    "unit": "g"
+  },
+  {
+    "id": "e1758971811608ijcp",
+    "ts": 1758971811608,
+    "date": "2025-09-27",
+    "product": "Lapte Almond Drink Nature's Promise 1L (100ml)",
+    "qty": 100,
+    "unit": "ml"
+  },
+  {
+    "id": "e1758918364786kd32",
+    "ts": 1758918364786,
+    "date": "2025-09-26",
+    "product": "Mar Granny Smith (100g pulpă)",
+    "qty": 100,
+    "unit": "g"
+  },
+  {
+    "id": "e1758914294286rv03",
+    "ts": 1758914294286,
+    "date": "2025-09-26",
+    "product": "Paine cu maia (100g)",
+    "qty": 80,
+    "unit": "g"
+  },
+  {
+    "id": "e1758914275596zo4l",
+    "ts": 1758914275596,
+    "date": "2025-09-26",
+    "product": "Olympus Iaurt grecesc de băut 2%",
+    "qty": 330,
+    "unit": "ml"
+  },
+  {
+    "id": "e1758897053347dxhv",
+    "ts": 1758897053347,
+    "date": "2025-09-26",
+    "product": "Gullón Biscuiți pentru ceai (un biscuițel ~6,5 g)",
+    "qty": 2,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758897006157uk43",
+    "ts": 1758897006157,
+    "date": "2025-09-26",
+    "product": "Miez nuca (100g)",
+    "qty": 25,
+    "unit": "g"
+  },
+  {
+    "id": "e1758896980221p1yp",
+    "ts": 1758896980221,
+    "date": "2025-09-26",
+    "product": "Salata de varza Mega Image 200g (100g)",
+    "qty": 200,
+    "unit": "g"
+  },
+  {
+    "id": "e17588969713422b8d",
+    "ts": 1758896971342,
+    "date": "2025-09-26",
+    "product": "Crenvursti vegani afumati Aivia (100g)",
+    "qty": 200,
+    "unit": "g"
+  },
+  {
+    "id": "e17588969509643elc",
+    "ts": 1758896950964,
+    "date": "2025-09-26",
+    "product": "Paine cu maia (100g)",
+    "qty": 100,
+    "unit": "g"
+  },
+  {
+    "id": "e1758896524353ucan",
+    "ts": 1758896524353,
+    "date": "2025-09-26",
+    "product": "Linte Mega Image 240g (100g)",
+    "qty": 480,
+    "unit": "g"
+  },
+  {
+    "id": "e1758896508325txao",
+    "ts": 1758896508325,
+    "date": "2025-09-26",
+    "product": "Gullón Biscuiți pentru ceai (un biscuițel ~6,5 g)",
+    "qty": 4,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758877406222q88y",
+    "ts": 1758877406222,
+    "date": "2025-09-26",
+    "product": "Gullón Biscuiți pentru ceai (un biscuițel ~6,5 g)",
+    "qty": 4,
+    "unit": "buc"
+  },
+  {
+    "id": "e1758873256917c5xt",
+    "ts": 1758873256917,
+    "date": "2025-09-26",
+    "product": "Budinca proteica de branza Alex (100g)",
+    "qty": 290,
+    "unit": "g"
+  },
+  {
     "id": "e17588295070965ntf",
     "ts": 1758829507096,
     "date": "2025-09-25",

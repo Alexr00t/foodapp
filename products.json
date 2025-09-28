@@ -1515,10 +1515,22 @@
   "fib": 0.1,
   "pro": 16.9,
   "sod": 1.8
+},
+{
+  "name": "Crenvursti vegani afumati Aivia (100g)",
+  "base": "100g",
+  "gPerPiece": null,
+  "mlPerPiece": null,
+  "cal": 157,
+  "fat": 8,
+  "sat": 1,
+  "carb": 3.6,
+  "glu": 3.6,
+  "sug": 0.7,
+  "fib": 0,
+  "pro": 16.9,
+  "sod": 2.5
 }
-
-
-
 
 ]
 
